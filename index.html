@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FSKM Intern System</title>
+    <link rel="stylesheet" href="../global.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="min-h-screen bg-[var(--background)] flex flex-col">
+        <header class="bg-white border-b border-slate-100 fixed w-full z-40">
+            <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+                <a href="/" class="flex items-center gap-2">
+                    <img src="https://www.ibec.unimas.my/images/2020/09/24/uitm.png" alt="UiTM Logo" class="w-[24px] h-auto object-contain" />
+                    <span class="text-xl font-semibold text-var[--foreground]">FSKM Internship</span>
+                </a>
+
+                <nav class="hidden md:flex items-center gap-12">
+                    <a href="/" class="font-medium text-[var(--primary)] underline duration-100">
+                        Home
+                    </a>
+                    <a href="/company" class="font-medium text-[var(--muted)] hover:text-[var(--primary)] duration-100">
+                        Company
+                    </a>
+                    <a href="/about" class="font-medium text-[var(--muted)] hover:text-[var(--primary)] duration-100">
+                        About
+                    </a>
+                </nav>
+
+                <div class="hidden md:flex items-center gap-4">
+                    <button class="btn font-medium px-4 py-2 bg-[var(--background)] rounded-[var(--radius)] text-[var(--foreground)] hover:text-[var(--primary)] border border-[var(--input)] border-solid">
+                        <a href="/login">Login</a>
+                    </button>
+                    <button class="btn font-medium px-4 py-2 bg-[var(--primary)] hover:bg-[var(--primary-hover)] rounded-[var(--radius)] text-[var(--background)]">
+                        <a href="/register">Register</a>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="container mx-auto flex-1 flex flex-col pt-5">
+            <section class="min-h-[calc(100svh-1rem)] flex items-center justify-center">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div class="text-center lg:text-left">
+                        <span class="text-[var(--primary)] font-medium mb-4 block">
+                            Welcome to FSKM Internship
+                        </span>
+                        <h1 class="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                            Launch Your Career <br />
+                            <span class="text-[var(--primary)]">Through Real Experience</span>
+                        </h1>
+                        <p class="text-lg text-[var(--muted)] mb-8 max-w-lg">
+                            Connect with top companies, gain practical skills and kickstart journey through our curated internship opportunities.
+                        </p>
+                        <div class="flex gap-4 justify-center lg:justify-start">
+                            <button class="btn font-medium px-7 py-3 bg-[var(--primary)] hover:bg-[var(--primary-hover)] rounded-[var(--radius)] text-[var(--background)]">
+                                <a href="/login">Browse Interships</a>
+                            </button>
+                            <button class="btn font-medium px-7 py-3 bg-[var(--background)] rounded-[var(--radius)] text-[var(--foreground)] hover:text-[var(--primary)] border border-[var(--input)] border-solid">
+                                <a href="/register">Join Now</a>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="relative hidden lg:block">
+                        <div class="relative">
+                            <video autoplay loop muted>
+                                <source src="./src/landing-animation.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-16">
+                <div class="mx-auto p-8 md:p-0">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-2">
+                        <div>
+                            <h2 class="text-2xl font-semibold">
+                                Featured Internships
+                            </h2>
+                            <p class="text-[var(--muted)]">
+                                Discover top opportunities from leading companies.
+                            </p>
+                        </div>
+                        <a href="/internships" class="inline-flex items-center gap-2 text-[var(--primary)] font-medium transition hover:underline">
+                            View all internships
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6" id="featured-internships"></div>
+                </div>
+            </section>
+        </main>
+        
+        <footer class="pt-12 pb-8 shadow-sm">
+            <div class="border-t pt-6">
+                <div class="container mx-auto px-4 items-center">
+                    <div class="sm:flex sm:items-center sm:justify-between">
+                        <a href="/" class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse justify-center">
+                            <img src="https://www.ibec.unimas.my/images/2020/09/24/uitm.png" alt="UiTM Logo" class="h-8" />
+                            <span class="self-center text-xl font-semibold whitespace-nowrap">FSKM Internship</span>
+                        </a>
+                        <ul class="flex flex-wrap items-center mb-6 text-sm font-medium text-[var(--muted)] sm:mb-0 gap-12 justify-center">
+                            <li>
+                                <a href="/" class="text-[var(--muted)]">
+                                    Home
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/company" class="font-medium text-[var(--muted)]">
+                                    Company
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/about" class="font-medium text-[var(--muted)]">
+                                    About
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <hr class="my-4 border sm:mx-auto lg:my-6">
+                    <div class="block text-sm text-center">© 2025 <a href="/" class="hover:underline">Internship System</a>. All Rights Reserved.</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/js/featuredInternships.js"></script>
+</body>
+</html>
