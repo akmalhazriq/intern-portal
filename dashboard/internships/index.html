@@ -13,8 +13,8 @@
 </head>
 
 <body>
-    <div class="min-h-screen flex w-full bg-gray-50">
-        <div class="flex h-screen w-0 md:w-64 flex-col bg-[var(--background)] text-[var(--foreground)] border-r border-gray-200 transform transition-all duration-300 ease-in-out overflow-hidden" id="sidebar">
+    <div class="min-h-[svh] flex w-full bg-gray-50">
+        <div class="flex h-screen w-0 flex-col bg-[var(--background)] text-[var(--foreground)] border-r border-gray-200 transform transition-all duration-300 ease-in-out overflow-hidden" id="sidebar">
             <div class="p-4">
                 <div class="flex items-center gap-2">
                     <i class="fas fa-briefcase h-6 w-6 text-[var(--primary)] text-xl"></i>
@@ -188,11 +188,66 @@
             <div class="flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
                 <div class="space-y-6">
                     <div>
-                        <h1 class="text-3xl font-bold tracking-tight">Internships</h1>
+                        <h1 class="text-3xl font-bold tracking-tight">Find Your Next Opportunity</h1>
+                        <p class="text-[var(--muted)]">Browse and apply for internships that match your skills and interests.</p>
                     </div>
 
-                    <div class="grid gap-4 md:grid-cols-2">
-                        
+                    <div class="rounded-lg border bg-[var(--background)] shadow-sm">
+                        <div class="py-8">
+                            <div class="container mx-auto px-4">
+                                <div>
+                                    <h2 class="text-2xl font-medium mb-6">Find Your Perfect Internship</h2>
+
+                                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                        <div class="col-span-1 md:col-span-2">
+                                            <div class="relative">
+                                                <i class="fas fa-search absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-[var(--muted)]"></i>
+                                                <input type="text" class="flex h-10 w-full rounded-md border border-[var(--input)] bg-[var(--background)] px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-[var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pl-10" placeholder="Search titles, companies, or skills...">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <button type="button" class="flex h-10 w-full items-center justify-between rounded-md border border-[var(--input)] bg-[var(--background)] px-3 py-2 text-sm ring-offset-[var(--background)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1">
+                                                <span>All Locations</span>
+                                                <i class="fa-solid fa-chevron-down h-4 w-4 text-[var(--muted)]"></i>
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <button type="button" class="flex h-10 w-full items-center justify-between rounded-md border border-[var(--input)] bg-[var(--background)] px-3 py-2 text-sm ring-offset-[var(--background)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1">
+                                                <span>All Types</span>
+                                                <i class="fa-solid fa-chevron-down h-4 w-4 text-[var(--muted)]"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex justify-between items-center mt-6">
+                                        <div class="text-sm text-[var(--muted)]">
+                                            0 Internships Found
+                                        </div>
+
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-sm font-medium">Sort by: </span>
+                                            <div class="relative inline-block text-left">
+                                                <button type="button" id="sort-button" class="flex h-10 w-[130px] items-center justify-between rounded-md border border-[var(--input)] bg-[var(--background)] px-3 py-2 text-sm ring-offset-[var(--background)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                                                    <span id="selected-sort">Newest</span>
+                                                    <i class="fa-solid fa-chevron-down h-4 w-4 text-[var(--muted)]"></i>
+                                                </button>
+                                                
+                                                <div id="sort-dropdown" class="hidden absolute right-0 mt-2 w-[130px] rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                                                    <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="sort-button">
+                                                        <button class="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" data-value="newest">
+                                                            Newest
+                                                        </button>
+                                                        <button class="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" data-value="oldest">
+                                                            Oldest
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

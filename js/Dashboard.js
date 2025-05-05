@@ -24,7 +24,6 @@ document.addEventListener('click', (event) => {
 
 const sidebarToggle = document.getElementById('sidebar-toggle');
 const sidebar = document.getElementById('sidebar');
-const mainContent = document.querySelector('.flex-1');
 
 // Track sidebar state
 let sidebarOpen = true;
@@ -36,12 +35,12 @@ sidebarToggle.addEventListener('click', () => {
         // Open sidebar with animation
         sidebar.classList.remove('-translate-x-full');
         sidebar.classList.remove('w-0');
-        sidebar.classList.add('md:w-64');
+        sidebar.classList.add('w-64');
         sidebar.classList.add('translate-x-0');
     } else {
         // Close sidebar with animation
         sidebar.classList.remove('translate-x-0');
-        sidebar.classList.remove('md:w-64');
+        sidebar.classList.remove('w-64');
         sidebar.classList.add('w-0');
         sidebar.classList.add('-translate-x-full');
     }
@@ -52,14 +51,14 @@ function initializeSidebar() {
     if (window.innerWidth < 768) {
         sidebar.classList.add('-translate-x-full');
         sidebar.classList.remove('translate-x-0');
-        sidebar.classList.remove('md:w-64');
+        sidebar.classList.remove('w-64');
         sidebar.classList.add('w-0');
         sidebarOpen = false;
     } else {
         sidebar.classList.add('translate-x-0');
         sidebar.classList.remove('-translate-x-full');
         sidebar.classList.remove('w-0');
-        sidebar.classList.add('md:w-64');
+        sidebar.classList.add('w-64');
         sidebarOpen = true;
     }
 }
@@ -204,4 +203,35 @@ document.addEventListener('DOMContentLoaded', () => {
     populateUpcomingEvents();
     populateRecentApplications();
     populateRecommendedInternships();
+});
+
+// Sort Dropdown Logic
+const sortButton = document.getElementById('sort-button');
+const sortDropdown = document.getElementById('sort-dropdown');
+const selectedSort = document.getElementById('selected-sort');
+
+// Toggle dropdown on button click
+sortButton.addEventListener('click', function (e) {
+    e.stopPropagation();
+    sortDropdown.classList.toggle('hidden');
+});
+
+// Handle option click
+sortDropdown.querySelectorAll('button[data-value]').forEach(btn => {
+    btn.addEventListener('click', function () {
+        selectedSort.textContent = this.textContent.trim();
+        sortDropdown.classList.add('hidden');
+    });
+});
+
+// Hide dropdown when clicking outside
+document.addEventListener('click', function (e) {
+    if (!sortDropdown.classList.contains('hidden')) {
+        sortDropdown.classList.add('hidden');
+    }
+});
+
+// Prevent closing when clicking inside dropdown
+sortDropdown.addEventListener('click', function (e) {
+    e.stopPropagation();
 });
