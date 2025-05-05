@@ -30,12 +30,16 @@
                 </nav>
 
                 <div class="hidden md:flex items-center gap-4">
-                    <button class="btn font-medium px-4 py-2 bg-[var(--background)] rounded-[var(--radius)] text-[var(--foreground)] hover:text-[var(--primary)] border border-[var(--input)] border-solid">
-                        <a href="/login">Login</a>
-                    </button>
-                    <button class="btn font-medium px-4 py-2 bg-[var(--primary)] hover:bg-[var(--primary-hover)] rounded-[var(--radius)] text-[var(--background)]">
-                        <a href="/register">Register</a>
-                    </button>
+                    <a href="/login">
+                        <button class="btn font-medium px-4 py-2 bg-[var(--background)] rounded-[var(--radius)] text-[var(--foreground)] hover:text-[var(--primary)] border border-[var(--input)] border-solid">
+                            Login
+                        </button>
+                    </a>
+                    <a href="/register">
+                        <button class="btn font-medium px-4 py-2 bg-[var(--primary)] hover:bg-[var(--primary-hover)] rounded-[var(--radius)] text-[var(--background)]">                        
+                            Register
+                        </button>
+                    </a>
                 </div>
             </div>
         </header>
@@ -55,12 +59,16 @@
                             Connect with top companies, gain practical skills and kickstart journey through our curated internship opportunities.
                         </p>
                         <div class="flex gap-4 justify-center lg:justify-start">
-                            <button class="btn font-medium px-7 py-3 bg-[var(--primary)] hover:bg-[var(--primary-hover)] rounded-[var(--radius)] text-[var(--background)]">
-                                <a href="/login">Browse Interships</a>
-                            </button>
-                            <button class="btn font-medium px-7 py-3 bg-[var(--background)] rounded-[var(--radius)] text-[var(--foreground)] hover:text-[var(--primary)] border border-[var(--input)] border-solid">
-                                <a href="/register">Join Now</a>
-                            </button>
+                            <a href="/login">
+                                <button class="btn font-medium px-7 py-3 bg-[var(--primary)] hover:bg-[var(--primary-hover)] rounded-[var(--radius)] text-[var(--background)]">
+                                    Browse Interships
+                                </button>
+                            </a>
+                            <a href="/register">
+                                <button class="btn font-medium px-7 py-3 bg-[var(--background)] rounded-[var(--radius)] text-[var(--foreground)] hover:text-[var(--primary)] border border-[var(--input)] border-solid">
+                                    Join Now
+                                </button>
+                            </a>
                         </div>
                     </div>
 
@@ -98,7 +106,7 @@
         <footer class="pt-12 pb-8 shadow-sm">
             <div class="border-t pt-6">
                 <div class="container mx-auto px-4 items-center">
-                    <div class="sm:flex sm:items-center sm:justify-between">
+                    <div class="space-y-4">
                         <a href="/" class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse justify-center">
                             <img src="https://www.ibec.unimas.my/images/2020/09/24/uitm.png" alt="UiTM Logo" class="h-8" />
                             <span class="self-center text-xl font-semibold whitespace-nowrap">FSKM Internship</span>
@@ -121,7 +129,7 @@
                             </li>
                         </ul>
                     </div>
-                    <hr class="my-4 border sm:mx-auto lg:my-6">
+                    <hr class="my-4 sm:my-3 border sm:border-transparent sm:mx-auto">
                     <div class="block text-sm text-center">© 2025 <a href="/" class="hover:underline">Internship System</a>. All Rights Reserved.</div>
                 </div>
             </div>

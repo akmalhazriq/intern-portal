@@ -1,0 +1,68 @@
+<?php
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>FSKM Intern System - Login</title>
+        <link rel="stylesheet" href="../global.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body>
+        <main class="min-h-[100svh] flex flex-col items-center justify-center">
+            <div class="md:px-4 md:py-6">
+                <div class="grid md:grid-cols-2 items-center gap-6 max-w-6xl">
+                    <div class="md:border md:rounded-lg p-6 max-w-md md:shadow max-md:mx-auto">
+                        <form action="#" class="space-y-6">
+                            <div class="mb-10">
+                                <h3 class="text-[var(--foreground)] text-3xl font-semibold text-center">Welcome Back!</h3>
+                                <p class="text-[var(--muted)] text-sm mt-2 leading-relaxed text-center">Enter your credentials to access your account</p>
+                            </div>
+
+                            <div>
+                                <label for="email" class="text-sm font-medium mb-2 block">Email</label>
+                                <div class="relative flex items-center">
+                                    <input type="text" name="email" required class="w-full text-sm border shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)]" placeholder="Email">
+                                    <i class="fa-solid fa-envelope absolute right-4 text-[var(--muted)]"></i>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="password" class="text-sm font-medium mb-2 block">Password</label>
+                                <div class="relative flex items-center">
+                                    <input type="password" name="password" required class="w-full text-sm border shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)]" placeholder="Password">
+                                    <i class="fa-solid fa-lock absolute right-4 text-[var(--muted)]"></i>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end w-full">
+                                <div class="text-sm">
+                                    <a href="/forgot-password" class="text-[var(--primary)] hover:underline font-medium">
+                                        Forgot Password?
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="!mt-10">
+                                <a href="/dashboard/">
+                                    <button type="button" class="w-full shadow-xl py-2.5 px-4 text-[15px] font-medium tracking-wide rounded-lg text-[var(--background)] bg-[var(--primary)] hover:bg-[var(--primary-hover)] focus:outline-none">
+                                        Login
+                                    </button>
+                                </a>
+                                <p class="text-sm !mt-6 text-center text-[var(--muted)]">Don't have an account? <a href="/register" class="text-[var(--primary)] font-medium hover:underline ml-1 whitespace-nowrap">Register here</a></p>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="max-md:mt-8 hidden md:flex">
+                        <img src="../src/login-image.webp" alt="" class="w-full aspect-[71/50] max-md:w-4/5 mx-auto block object-cover">
+                    </div>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>
