@@ -181,7 +181,7 @@ function populateRecommendedInternships() {
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <div class="h-10 w-10 rounded bg-gray-100 flex items-center justify-center">
-                        <i class="fas fa-building h-5 w-5 text-gray-500"></i>
+                        <i class="fas fa-building h-5 w-5 text-gray-500 flex items-center justify-center"></i>
                     </div>
                     <div>
                         <p class="font-medium">${positions[i]}</p>
