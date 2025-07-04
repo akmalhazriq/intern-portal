@@ -24,6 +24,7 @@ document.addEventListener('click', (event) => {
 
 const sidebarToggle = document.getElementById('sidebar-toggle');
 const sidebar = document.getElementById('sidebar');
+const mainContent = document.getElementById('main-content');
 
 // Track sidebar state
 let sidebarOpen = true;
@@ -37,12 +38,16 @@ sidebarToggle.addEventListener('click', () => {
         sidebar.classList.remove('w-0');
         sidebar.classList.add('w-64');
         sidebar.classList.add('translate-x-0');
+        mainContent.classList.add('ml-64');
+        mainContent.classList.remove('ml-0');
     } else {
         // Close sidebar with animation
         sidebar.classList.remove('translate-x-0');
         sidebar.classList.remove('w-64');
         sidebar.classList.add('w-0');
         sidebar.classList.add('-translate-x-full');
+        mainContent.classList.remove('ml-64');
+        mainContent.classList.add('ml-0');
     }
 });
 
@@ -53,12 +58,16 @@ function initializeSidebar() {
         sidebar.classList.remove('translate-x-0');
         sidebar.classList.remove('w-64');
         sidebar.classList.add('w-0');
+        mainContent.classList.remove('ml-64');
+        mainContent.classList.add('ml-0');
         sidebarOpen = false;
     } else {
         sidebar.classList.add('translate-x-0');
         sidebar.classList.remove('-translate-x-full');
         sidebar.classList.remove('w-0');
         sidebar.classList.add('w-64');
+        mainContent.classList.add('ml-64');
+        mainContent.classList.remove('ml-0');
         sidebarOpen = true;
     }
 }
@@ -69,13 +78,19 @@ initializeSidebar();
 // Also run when window is resized
 window.addEventListener('resize', initializeSidebar);
 
-
-// Sample data for upcoming events
-const upcomingEvents = [
-    { id: 1, title: 'Interview with Tech Solutions', date: '2025-05-10', company: 'Tech Solutions Inc.' },
-    { id: 2, title: 'Career Fair', date: '2025-05-15', company: 'University Event' },
-    { id: 3, title: 'Follow-up with DataCorp', date: '2025-05-18', company: 'DataCorp' },
-];
+if (window.innerWidth <= 768) {
+    document.addEventListener('click', (event) => {
+        if (!sidebarToggle.contains(event.target) &&!sidebar.contains(event.target)) {
+            sidebar.classList.add('-translate-x-full');
+            sidebar.classList.remove('translate-x-0');
+            sidebar.classList.remove('w-64');
+            sidebar.classList.add('w-0');
+            mainContent.classList.remove('ml-64');
+            mainContent.classList.add('ml-0');
+            sidebarOpen = false;
+        }
+    });
+}
 
 // Sample data for recent applications
 const recentApplications = [
@@ -112,30 +127,6 @@ function getProgressValue(status) {
         default:
             return 100;
     }
-}
-
-// Populate upcoming events
-function populateUpcomingEvents() {
-    const container = document.getElementById('upcoming-events-container');
-    
-    upcomingEvents.forEach(event => {
-        const eventElement = document.createElement('div');
-        eventElement.className = 'flex items-start gap-3';
-        eventElement.innerHTML = `
-            <div class="bg-[var(--primary-light)] text-[var(--primary)] rounded-md p-2 flex items-center justify-center">
-                <i class="fas fa-calendar h-5 w-5 flex items-center justify-center"></i>
-            </div>
-            <div>
-                <p class="font-medium">${event.title}</p>
-                <div class="flex items-center gap-2 text-sm text-[var(--muted)]">
-                    <span>${formatDate(event.date)}</span>
-                    <span>•</span>
-                    <span>${event.company}</span>
-                </div>
-            </div>
-        `;
-        container.appendChild(eventElement);
-    });
 }
 
 // Populate recent applications
@@ -235,3 +226,4 @@ document.addEventListener('click', function (e) {
 sortDropdown.addEventListener('click', function (e) {
     e.stopPropagation();
 });
+

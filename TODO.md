@@ -1,0 +1,70 @@
+# FSKM Internship System
+
+### User - Student
+- [x] Dashboard Page
+  - [x] Sidebar
+  - [x] Header
+  - [x] Content
+    - [x] Announcement
+    - [x] Recent Applications
+    - [x] Recommended Internships
+- [ ] Internships Page
+  - [x] Sidebar
+  - [x] Header
+  - [ ] Content
+    - [x] Search UI
+    - [x] Vacancy View
+      - [ ] Find by titles
+      - [ ] Sort by
+      - [x] View vacancy by ID
+      - [x] Apply Page and Function
+- [ ] Status Page
+  - [ ] Sidebar
+  - [ ] Header
+  - [ ] Content
+    - [ ] Application Status
+- [x] Profile Page
+  - [x] Sidebar
+  - [x] Header
+  - [x] Content
+    - [x] Profile Info Side
+    - [x] Update Profile Side
+- [x] Settings Page
+  - [x] Sidebar
+  - [x] Header
+  - [x] Content
+   - [x] Appearance Setting
+- [x] Logout
+
+
+### User - Company (Will be update)
+- [x] Dashboard Page
+  - [x] Sidebar
+  - [x] Header
+  - [x] Content
+    - [x] Announcement
+    - [x] Recent Applications
+    - [x] Recommended Internships
+- [ ] Internships Page
+  - [x] Sidebar
+  - [x] Header
+  - [ ] Content
+    - [x] Search UI
+    - [ ] Vacancy View
+- [ ] Status Page
+  - [ ] Sidebar
+  - [ ] Header
+  - [ ] Content
+    - [ ] Application Status
+- [x] Profile Page
+  - [x] Sidebar
+  - [x] Header
+  - [x] Content
+    - [x] Profile Info Side
+    - [x] Update Profile Side
+- [x] Settings Page
+  - [x] Sidebar
+  - [x] Header
+  - [x] Content
+   - [x] Appearance Setting
+- [x] Logout

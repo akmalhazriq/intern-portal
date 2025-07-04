@@ -5,7 +5,7 @@
     --primary: #8B5CF6;
     --primary-light: #8b5cf63d;
     --primary-hover: #7C3AED;
-    --secondary: #E9E9E9;
+    --secondary: #F3F4F6;
     --background: #FFFFFF;
     --foreground: #0F172A;
     --card: #FFFFFF;
@@ -13,7 +13,21 @@
     --muted: #79828f;
     --destructive: #EF4444;
     --radius: 0.5rem;
-    --input: #e2e8f0;
+    --input: #f8f8f8;
+}
+
+.dark {
+    --primary: #a78bfa;
+    --primary-light: #312e81;
+    --primary-hover: #6d28d9;
+    --secondary: #181818;
+    --background: #141416;
+    --foreground: #f1f5f9;
+    --card: #23272f;
+    --border: #27272a;
+    --muted: #a1a1aa;
+    --destructive: #ef4444;
+    --input: #27272a;
 }
 
 body {
