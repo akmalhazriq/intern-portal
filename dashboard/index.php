@@ -655,7 +655,7 @@ if (isset($_SESSION['user_id'])) {
                                                             </div>
                                                             <div>
                                                                 <p class="font-medium"><?php echo $announcement['announcement_title']; ?></p>
-                                                                <div class="flex items-center gap-2 text-sm text-[var,--muted)]">
+                                                                <div class="flex items-center gap-2 text-sm text-[var(--muted)]">
                                                                     <span><?php echo date('F j, Y', strtotime($announcement['created_at'])); ?></span>
                                                                     <span>•</span>
                                                                     <span><?php echo $announcement['company_name']; ?></span>
@@ -687,7 +687,7 @@ if (isset($_SESSION['user_id'])) {
                                     ORDER BY a.applied_at DESC
                                     LIMIT 3";
                                 $result = mysqli_query($dbconn, $query);
-                                echo '<div class="rounded-lg border border-[var,--border)] bg-[var,--background)] shadow-sm transition-all hover:shadow-md">';
+                                echo '<div class="rounded-lg border border-[var(--border)] bg-[var(--background)] shadow-sm transition-all hover:shadow-md">';
                                 echo '<div class="flex flex-col space-y-1.5 p-6">';
                                 echo '<h3 class="flex items-center gap-2 text-2xl font-semibold leading-none tracking-tight">';
                                 echo '<i class="fas fa-briefcase h-5 w-5 text-[var(--primary)]"></i>';
@@ -739,7 +739,7 @@ if (isset($_SESSION['user_id'])) {
                                             WHERE v.company_id = $company_id 
                                             ORDER BY a.applied_at DESC LIMIT 5";
                                 $result = mysqli_query($dbconn, $query);
-                                echo '<div class="rounded-lg border border-[var,--border)] bg-[var,--background)] shadow-sm transition-all hover:shadow-md">';
+                                echo '<div class="rounded-lg border border-[var(--border)] bg-[var(--background)] shadow-sm transition-all hover:shadow-md">';
                                 echo '<div class="flex flex-col space-y-1.5 p-6">';
                                 echo '<h3 class="flex items-center gap-2 text-2xl font-semibold leading-none tracking-tight">';
                                 echo '<i class="fa-solid fa-clock-rotate-left h-5 w-5 text-[var(--primary)]"></i> &nbsp;Latest Applications';
@@ -781,7 +781,7 @@ if (isset($_SESSION['user_id'])) {
                                 $applicantResult = mysqli_query($dbconn, $applicantQuery);
                                 $vacancyResult = mysqli_query($dbconn, $vacancyQuery);
                         ?>
-                            <div class="rounded-lg border border-[var,--border)] bg-[var,--background)] shadow-sm transition-all hover:shadow-md">
+                            <div class="rounded-lg border border-[var(--border)] bg-[var(--background)] shadow-sm transition-all hover:shadow-md">
                                 <div class="flex flex-col space-y-1.5 p-6">
                                     <h3 class="flex items-center gap-2 text-2xl font-semibold leading-none tracking-tight">
                                         <i class="fa-solid fa-chart-pie h-5 w-5 text-[var(--primary)]"></i> &nbsp;Analytics
@@ -865,17 +865,17 @@ if (isset($_SESSION['user_id'])) {
                             $companyCount = mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) as total FROM company"))['total'];
                             $internshipCount = mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) as total FROM vacancy"))['total'];
                             $applicationCount = mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) as total FROM applicant"))['total'];
-                            echo '<div class="rounded-lg border border-[var,--border)] bg-[var,--background)] shadow-sm transition-all hover:shadow-md mb-6">';
+                            echo '<div class="rounded-lg border border-[var(--border)] bg-[var(--background)] shadow-sm transition-all hover:shadow-md mb-6">';
                             echo '<div class="flex flex-col space-y-1.5 p-6">';
                             echo '<h3 class="flex items-center gap-2 text-2xl font-semibold leading-none tracking-tight">';
                             echo '<i class="fa-solid fa-chart-simple h-5 w-5 text-[var(--primary)]"></i>';
                             echo 'Platform Statistics';
                             echo '</h3>';
                             echo '<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4">';
-                            echo '<div class="text-center"><div class="text-3xl font-bold">' . $userCount . '</div><div class="text-sm text-[var,--muted)]">Users</div></div>';
-                            echo '<div class="text-center"><div class="text-3xl font-bold">' . $companyCount . '</div><div class="text-sm text-[var,--muted)]">Companies</div></div>';
-                            echo '<div class="text-center"><div class="text-3xl font-bold">' . $internshipCount . '</div><div class="text-sm text-[var,--muted)]">Internships</div></div>';
-                            echo '<div class="text-center"><div class="text-3xl font-bold">' . $applicationCount . '</div><div class="text-sm text-[var,--muted)]">Applications</div></div>';
+                            echo '<div class="text-center"><div class="text-3xl font-bold">' . $userCount . '</div><div class="text-sm text-[var(--muted)]">Users</div></div>';
+                            echo '<div class="text-center"><div class="text-3xl font-bold">' . $companyCount . '</div><div class="text-sm text-[var(--muted)]">Companies</div></div>';
+                            echo '<div class="text-center"><div class="text-3xl font-bold">' . $internshipCount . '</div><div class="text-sm text-[var(--muted)]">Internships</div></div>';
+                            echo '<div class="text-center"><div class="text-3xl font-bold">' . $applicationCount . '</div><div class="text-sm text-[var(--muted)]">Applications</div></div>';
                             echo '</div>';
                             echo '</div>';
                             // Recent activity (latest 5 applications)
@@ -887,12 +887,12 @@ if (isset($_SESSION['user_id'])) {
                                 while ($app = mysqli_fetch_assoc($recentApps)) {
                                     echo '<li class="py-2 flex justify-between items-center">';
                                     echo '<span><strong>' . $app['user_name'] . '</strong> applied for <strong>' . $app['internship_title'] . '</strong></span>';
-                                    echo '<span class="text-xs text-[var,--muted)]">' . date('M d, Y', strtotime($app['applied_at'])) . '</span>';
+                                    echo '<span class="text-xs text-[var(--muted)]">' . date('M d, Y', strtotime($app['applied_at'])) . '</span>';
                                     echo '</li>';
                                 }
                                 echo '</ul>';
                             } else {
-                                echo '<div class="text-sm text-[var,--muted)]">No recent applications found.</div>';
+                                echo '<div class="text-sm text-[var(--muted)]">No recent applications found.</div>';
                             }
                             echo '</div>';
                             echo '</div>';
@@ -904,19 +904,19 @@ if (isset($_SESSION['user_id'])) {
                             include_once('../include/dbconn.php');
                             $query = "SELECT v.*, c.company_name FROM vacancy v JOIN company c ON v.company_id = c.company_id WHERE v.vacancy_status_id = 1 ORDER BY v.created_at DESC LIMIT 6";
                             $result = mysqli_query($dbconn, $query);
-                            echo '<div class="rounded-lg border border-[var,--border)] bg-[var,--background)] shadow-sm transition-all hover:shadow-md">';
+                            echo '<div class="rounded-lg border border-[var(--border)] bg-[var(--background)] shadow-sm transition-all hover:shadow-md">';
                             echo '<div class="flex flex-col space-y-1.5 p-6">';
                             echo '<h3 class="flex items-center gap-2 text-2xl font-semibold leading-none tracking-tight">';
                             echo '<i class="fas fa-building h-5 w-5 text-[var(--primary)]"></i>';
                             echo 'Recommended Internships';
                             echo '</h3>';
-                            echo '<p class="text-sm text-[var,--muted)]">Based on your profile and preferences</p>';
+                            echo '<p class="text-sm text-[var(--muted)]">Based on your profile and preferences</p>';
                             echo '</div>';
                             echo '<div class="p-6 pt-0">';
                             echo '<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">';
                             if (mysqli_num_rows($result) > 0) {
                                 while ($internship = mysqli_fetch_assoc($result)) {
-                                    echo '<div class="rounded-lg border border-[var,--border)] p-3 transition-all hover:shadow">';
+                                    echo '<div class="rounded-lg border border-[var(--border)] p-3 transition-all hover:shadow">';
                                     echo '<div class="flex items-center justify-between">';
                                     echo '<div class="flex items-center gap-2">';
                                     echo '<div class="h-10 w-10 rounded bg-[var(--secondary)] flex items-center justify-center">';
@@ -924,7 +924,7 @@ if (isset($_SESSION['user_id'])) {
                                     echo '</div>';
                                     echo '<div>';
                                     echo '<p class="font-medium">' . $internship['title'] . '</p>';
-                                    echo '<p class="text-sm text-[var,--muted)]">' . $internship['company_name'] . '</p>';
+                                    echo '<p class="text-sm text-[var(--muted)]">' . $internship['company_name'] . '</p>';
                                     echo '</div>';
                                     echo '</div>';
                                     echo '</div>';
@@ -936,7 +936,7 @@ if (isset($_SESSION['user_id'])) {
                                     echo '</div>';
                                 }
                             } else {
-                                echo '<div class="text-sm text-[var,--muted)]">No recommended internships found.</div>';
+                                echo '<div class="text-sm text-[var(--muted)]">No recommended internships found.</div>';
                             }
                             echo '</div>';
                             echo '</div>';
