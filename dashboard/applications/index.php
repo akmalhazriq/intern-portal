@@ -6,10 +6,12 @@ include('../../include/dbconn.php');
 if (isset($_SESSION['company_id'])) {
     $company_id = $_SESSION['company_id'];
     $level = 3;
-    $queryCompany = "SELECT * FROM company WHERE company_id = $company_id";
-    $resultCompany = mysqli_query($dbconn, $queryCompany);
-    if ($resultCompany && mysqli_num_rows($resultCompany) > 0) {
-        $company = mysqli_fetch_assoc($resultCompany);
+    $stmt = $dbconn->prepare("SELECT * FROM company WHERE company_id = ?");
+    $stmt->bind_param("i", $company_id);
+    $stmt->execute();
+    $resultCompany = $stmt->get_result();
+    if ($resultCompany && $resultCompany->num_rows > 0) {
+        $company = $resultCompany->fetch_assoc();
         $company_name = $company['company_name'];
         $logo = $company['logo'];
         $full_name = $company_name;
@@ -50,16 +52,46 @@ $applications_query = "SELECT a.*, u.full_name as student_name, u.email as stude
                         JOIN user u ON a.user_id = u.user_id
                         JOIN vacancy v ON a.vacancy_id = v.vacancy_id
                         JOIN company c ON v.company_id = c.company_id
-                        WHERE c.company_id = $company_id";
+                        WHERE c.company_id = ?";
+
+$params = [$company_id];
+$param_types = "i";
+
+// Apply filters
+if (!empty($vacancy_filter)) {
+    $applications_query .= " AND v.vacancy_id = ?";
+    $params[] = $vacancy_filter;
+    $param_types .= "i";
+}
+
+if (!empty($status_filter)) {
+    $applications_query .= " AND a.application_status_id = ?";
+    $params[] = $status_filter;
+    $param_types .= "i";
+}
+
+if (!empty($offer_filter)) {
+    $applications_query .= " AND a.offer_status_id = ?";
+    $params[] = $offer_filter;
+    $param_types .= "i";
+}
 
 $applications_query .= " ORDER BY a.applied_at DESC";
-$applications_result = mysqli_query($dbconn, $applications_query);
+
+$stmt = $dbconn->prepare($applications_query);
+if (!empty($params)) {
+    $stmt->bind_param($param_types, ...$params);
+}
+$stmt->execute();
+$applications_result = $stmt->get_result();
 
 // Get company vacancies for filter dropdown
-$vacancies_query = "SELECT v.vacancy_id, v.title FROM vacancy v 
-                    WHERE v.company_id = $company_id 
-                    ORDER BY v.title";
-$vacancies_result = mysqli_query($dbconn, $vacancies_query);
+$stmt = $dbconn->prepare("SELECT v.vacancy_id, v.title FROM vacancy v 
+                    WHERE v.company_id = ? 
+                    ORDER BY v.title");
+$stmt->bind_param("i", $company_id);
+$stmt->execute();
+$vacancies_result = $stmt->get_result();
 
 // Handle success/error messages
 $message = '';
@@ -429,7 +461,7 @@ if (isset($_GET['error'])) {
                                     <option value="">All Vacancies</option>
                                     <?php
                                     mysqli_data_seek($vacancies_result, 0);
-                                    while ($vacancy = mysqli_fetch_assoc($vacancies_result)) {
+                                    while ($vacancy = $vacancies_result->fetch_assoc()) {
                                         $selected = ($vacancy_filter == $vacancy['vacancy_id']) ? 'selected' : '';
                                         echo '<option value="' . $vacancy['vacancy_id'] . '" ' . $selected . '>' . $vacancy['title'] . '</option>';
                                     }
@@ -469,11 +501,11 @@ if (isset($_GET['error'])) {
                             <div class="flex items-center justify-between mb-4">
                                 <h2 class="text-xl font-semibold">Applications</h2>
                                 <span class="text-sm text-[var(--muted)]">
-                                    <?php echo mysqli_num_rows($applications_result); ?> application(s) found
+                                    <?php echo $applications_result->num_rows; ?> application(s) found
                                 </span>
                             </div>
 
-                            <?php if (mysqli_num_rows($applications_result) > 0): ?>
+                            <?php if ($applications_result->num_rows > 0): ?>
                                 <div class="overflow-x-auto">
                                     <table class="w-full">
                                         <thead>
@@ -487,7 +519,7 @@ if (isset($_GET['error'])) {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php while ($app = mysqli_fetch_assoc($applications_result)): ?>
+                                            <?php while ($app = $applications_result->fetch_assoc()): ?>
                                                 <tr class="border-b border-[var(--border)] hover:bg-[var(--secondary)]">
                                                     <td class="py-4 px-4">
                                                         <div class="flex items-center gap-3">
@@ -524,7 +556,6 @@ if (isset($_GET['error'])) {
                                                             <input type="hidden" name="applicant_id" value="<?php echo $app['user_id']; ?>">
                                                             <input type="hidden" name="vacancy_id" value="<?php echo $app['vacancy_id']; ?>">
                                                             <select name="application_status_id" 
-                                                                    onchange="this.form.submit()"
                                                                     class="px-2 py-1 border border-[var(--border)] rounded text-xs bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]">
                                                                 <option value="1" <?php echo ($app['application_status_id'] == 1) ? 'selected' : ''; ?>>Applied</option>
                                                                 <option value="2" <?php echo ($app['application_status_id'] == 2) ? 'selected' : ''; ?>>Interview</option>
@@ -538,7 +569,6 @@ if (isset($_GET['error'])) {
                                                                 <input type="hidden" name="update_offer_status" value="1">
                                                                 <input type="hidden" name="applicant_id" value="<?php echo $app['user_id']; ?>">
                                                                 <input type="hidden" name="vacancy_id" value="<?php echo $app['vacancy_id']; ?>">                                                                <select name="offer_status_id" 
-                                                                        onchange="this.form.submit()"
                                                                         class="px-2 py-1 border border-[var(--border)] rounded text-xs bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)]">
                                                                     <option value="1" <?php echo ($app['offer_status_id'] == 1) ? 'selected' : ''; ?>>Pending</option>
                                                                     <option value="2" <?php echo ($app['offer_status_id'] == 2) ? 'selected' : ''; ?>>Accepted</option>
@@ -690,14 +720,32 @@ if (isset($_GET['error'])) {
             }
         });
 
+        // Store original values for reset on cancel
+        const originalValues = new Map();
+        
+        // Store original values when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('select[name="application_status_id"], select[name="offer_status_id"]').forEach(function(select) {
+                originalValues.set(select, select.value);
+            });
+        });
+
         // Confirmation for status changes
         document.addEventListener('change', function(e) {
             if (e.target.tagName === 'SELECT' && (e.target.name === 'application_status_id' || e.target.name === 'offer_status_id')) {
                 const statusText = e.target.options[e.target.selectedIndex].text;
+                const originalValue = originalValues.get(e.target);
+                
                 if (!confirm(`Are you sure you want to change this to "${statusText}"?`)) {
-                    e.target.selectedIndex = 0; // Reset to first option
+                    // Reset to original value and prevent submission
+                    e.target.value = originalValue;
                     e.preventDefault();
+                    e.stopPropagation();
                     return false;
+                } else {
+                    // User confirmed, update the stored value and submit
+                    originalValues.set(e.target, e.target.value);
+                    e.target.form.submit();
                 }
             }
         });

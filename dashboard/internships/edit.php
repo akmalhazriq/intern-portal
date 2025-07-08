@@ -20,10 +20,12 @@ if (!$id) {
 include('../../include/dbconn.php');
 
 // Get company information
-$company_query = "SELECT * FROM company WHERE company_id = $company_id";
-$company_result = mysqli_query($dbconn, $company_query);
+$stmt = $dbconn->prepare("SELECT * FROM company WHERE company_id = ?");
+$stmt->bind_param("i", $company_id);
+$stmt->execute();
+$company_result = $stmt->get_result();
 
-if (!$company_result || mysqli_num_rows($company_result) == 0) {
+if (!$company_result || $company_result->num_rows == 0) {
     header('Location: /login');
     exit;
 }
@@ -41,13 +43,15 @@ $banner = $company['banner'];
 $logo = $company['logo'];
 
 // Fetch vacancy details and verify ownership
-$query = "SELECT v.*, s.semester_name FROM vacancy v 
+$stmt = $dbconn->prepare("SELECT v.*, s.semester_name FROM vacancy v 
     LEFT JOIN semester s ON v.semester_id = s.semester_id
-    WHERE v.vacancy_id = '$id' AND v.company_id = '$company_id'";
-$result = mysqli_query($dbconn, $query);
+    WHERE v.vacancy_id = ? AND v.company_id = ?");
+$stmt->bind_param("ii", $id, $company_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
-if ($result && mysqli_num_rows($result) > 0) {
-    $vacancy = mysqli_fetch_assoc($result);
+if ($result && $result->num_rows > 0) {
+    $vacancy = $result->fetch_assoc();
     $title = $vacancy['title'];
     $role = $vacancy['role'];
     $elaun = $vacancy['elaun'];
@@ -124,7 +128,7 @@ $full_name = $company_name;
                                 <div class="h-8 w-8 rounded-full overflow-hidden">
                                     <?php
                                     if ($logo) {
-                                        echo '<img src="../../src/company_logo/' . htmlspecialchars($logo) . '" alt="Company logo" class="h-full w-full object-cover" />';
+                                        echo '<img src="../../src/company_logo/' . htmlspecialchars($logo ?? '') . '" alt="Company logo" class="h-full w-full object-cover" />';
                                     } else {
                                         echo '<img src="https://cdn-icons-png.flaticon.com/512/3061/3061341.png" alt="Company logo" class="h-full w-full object-cover" />';
                                     }
@@ -269,13 +273,14 @@ $full_name = $company_name;
                                                 class="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent bg-[var(--background)] text-[var(--foreground)]">
                                             <option value="">Select a semester</option>
                                             <?php
-                                                $semester_query = "SELECT * FROM semester WHERE is_active = 1 ORDER BY start_date DESC";
-                                                $semester_result = mysqli_query($dbconn, $semester_query);
-                                                if ($semester_result && mysqli_num_rows($semester_result) > 0) {
-                                                    while ($semester_row = mysqli_fetch_assoc($semester_result)) {
+                                                $stmt = $dbconn->prepare("SELECT * FROM semester WHERE is_active = 1 ORDER BY start_date DESC");
+                                                $stmt->execute();
+                                                $semester_result = $stmt->get_result();
+                                                if ($semester_result && $semester_result->num_rows > 0) {
+                                                    while ($semester_row = $semester_result->fetch_assoc()) {
                                                         $selected = ($current_semester_id == $semester_row['semester_id']) ? 'selected' : '';
                                                         echo '<option value="' . $semester_row['semester_id'] . '" ' . $selected . '>' . 
-                                                             htmlspecialchars($semester_row['semester_name']) . 
+                                                             htmlspecialchars($semester_row['semester_name'] ?? '') . 
                                                              ' (' . date('M Y', strtotime($semester_row['start_date'])) . ' - ' . 
                                                              date('M Y', strtotime($semester_row['end_date'])) . ')</option>';
                                                     }
@@ -286,7 +291,7 @@ $full_name = $company_name;
                                         </select>
                                         <?php if ($current_semester_name): ?>
                                             <p class="text-xs text-[var(--muted)] mt-1">
-                                                Current: <?php echo htmlspecialchars($current_semester_name); ?>
+                                                Current: <?php echo htmlspecialchars($current_semester_name ?? ''); ?>
                                             </p>
                                         <?php endif; ?>
                                     </div>

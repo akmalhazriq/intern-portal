@@ -8,10 +8,12 @@
         // Student/Admin
         $user_id = $_SESSION['user_id'];
         $level = isset($_SESSION['level']) ? $_SESSION['level'] : null;
-        $query = "SELECT * FROM user WHERE user_id = $user_id";
-        $result = mysqli_query($dbconn, $query);
+        $stmt = $dbconn->prepare("SELECT * FROM user WHERE user_id = ?");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
         if ($result) {
-            $user = mysqli_fetch_assoc($result);
+            $user = $result->fetch_assoc();
             $full_name = $user['full_name'];
             $email = $user['email'];
             $area = $user['area'];
@@ -25,10 +27,12 @@
         // Company
         $company_id = $_SESSION['company_id'];
         $level = 3;
-        $queryCompany = "SELECT * FROM company WHERE company_id = $company_id";
-        $resultCompany = mysqli_query($dbconn, $queryCompany);
-        if ($resultCompany && mysqli_num_rows($resultCompany) > 0) {
-            $company = mysqli_fetch_assoc($resultCompany);
+        $stmt = $dbconn->prepare("SELECT * FROM company WHERE company_id = ?");
+        $stmt->bind_param("i", $company_id);
+        $stmt->execute();
+        $resultCompany = $stmt->get_result();
+        if ($resultCompany && $resultCompany->num_rows > 0) {
+            $company = $resultCompany->fetch_assoc();
             $company_name = $company['company_name'];
             $phone = $company['phone'];
             $email_company = $company['email'];
@@ -48,31 +52,9 @@
         exit();
     }
 
-    // Include database connection settings
-    include('../../include/dbconn.php');
-
-    $user_id = $_SESSION['user_id'];
-    $level = isset($_SESSION['level']) ? $_SESSION['level'] : null;
-
-    // Fetch user data from the database
-    $query = "SELECT * FROM user WHERE user_id = $user_id";
-    $result = mysqli_query($dbconn, $query);
-
-    if ($result) {
-        $user = mysqli_fetch_assoc($result);
-        $full_name = $user['full_name'];
-        $email = $user['email'];
-        $area = $user['area'];
-        $state = $user['state'];
-        $phone_number = $user['phone_number'];
-        $campus = $user['campus'];
-        $course = $user['course'];
-        $profile_picture = $user['profile_picture'];
-    }
-
     // For students, fetch their recent applications
     if ($level == 2) {
-        $applications_query = "SELECT a.*, v.title as vacancy_title, v.role, v.elaun, v.description,
+        $stmt = $dbconn->prepare("SELECT a.*, v.title as vacancy_title, v.role, v.elaun, v.description,
                                 c.company_name, c.logo, c.banner, c.area as company_area, c.state as company_state,
                                 CASE a.application_status_id 
                                     WHEN 1 THEN 'Applied'
@@ -88,9 +70,11 @@
                                 FROM applicant a
                                 JOIN vacancy v ON a.vacancy_id = v.vacancy_id
                                 JOIN company c ON v.company_id = c.company_id
-                                WHERE a.user_id = $user_id
-                                ORDER BY a.applied_at DESC";
-        $applications_result = mysqli_query($dbconn, $applications_query);
+                                WHERE a.user_id = ?
+                                ORDER BY a.applied_at DESC");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $applications_result = $stmt->get_result();
     }
 
     // Handle success/error messages
@@ -344,19 +328,14 @@
                                     if ($level == 3) {
                                         // Company - use company data already fetched
                                         if ($logo) {
-                                            echo '<img src="../../src/company_logo/' . htmlspecialchars($logo) . '" alt="Company logo" class="h-full w-full object-cover" />';
+                                            echo '<img src="../../src/company_logo/' . htmlspecialchars($logo ?? '') . '" alt="Company logo" class="h-full w-full object-cover" />';
                                         } else {
                                             echo '<img src="https://cdn-icons-png.flaticon.com/512/3061/3061341.png" alt="Company logo" class="h-full w-full object-cover" />';
                                         }
                                     } else {
-                                        // User
-                                        $query = "SELECT profile_picture FROM user WHERE user_id = $user_id";
-                                        $result = mysqli_query($dbconn, $query);
-                                        $user = mysqli_fetch_assoc($result);
-                                        $profile_picture = $user['profile_picture'];
-                                        
+                                        // User - use already fetched profile_picture
                                         if ($profile_picture) {
-                                            echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture) . '" alt="User avatar" class="h-full w-full object-cover" />';
+                                            echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture ?? '') . '" alt="User avatar" class="h-full w-full object-cover" />';
                                         } else {
                                             if ($level == 1) {
                                                 echo '<img src="https://cdn-icons-png.flaticon.com/512/6024/6024190.png" alt="User avatar" class="h-full w-full object-cover" />';
@@ -369,9 +348,7 @@
                             </div>
                             <div class="flex flex-col min-w-0">
                                 <span class="text-sm font-medium truncate max-w-64">
-                                    <?php
-                                        echo isset($_SESSION['full_name']) ? $_SESSION['full_name'] : 'Guest';
-                                    ?>
+                                    <?php echo htmlspecialchars($full_name ?? ''); ?>
                                 </span>
                                 <span class="text-xs text-[var(--muted)]">
                                     <?php
@@ -423,14 +400,14 @@
                                         if ($level == 3) {
                                             // Company
                                             if ($logo) {
-                                                echo '<img src="../../src/company_logo/' . htmlspecialchars($logo) . '" alt="Company logo" class="h-full w-full object-cover" />';
+                                                echo '<img src="../../src/company_logo/' . htmlspecialchars($logo ?? '') . '" alt="Company logo" class="h-full w-full object-cover" />';
                                             } else {
                                                 echo '<img src="https://cdn-icons-png.flaticon.com/512/3061/3061341.png" alt="Company logo" class="h-full w-full object-cover" />';
                                             }
                                         } else {
                                             // User
                                             if ($profile_picture) {
-                                                echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture) . '" alt="User avatar" class="h-full w-full object-cover" />';
+                                                echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture ?? '') . '" alt="User avatar" class="h-full w-full object-cover" />';
                                             } else {
                                                 if ($level == 1) {
                                                     echo '<img src="https://cdn-icons-png.flaticon.com/512/6024/6024190.png" alt="User avatar" class="h-full w-full object-cover" />';
@@ -488,12 +465,12 @@
                                     </div>
                                 </div>
                             <?php endif; ?>                            <!-- Applications List -->
-                            <?php if ($applications_result && mysqli_num_rows($applications_result) > 0): ?>
+                            <?php if ($applications_result && $applications_result->num_rows > 0): ?>
                                 <div class="bg-[var(--background)] rounded-lg border border-[var(--border)] shadow-sm">
                                     <div class="p-6">
                                         <h2 class="text-xl font-semibold mb-4">Your Applications</h2>
                                         <div class="space-y-4">
-                                            <?php while ($app = mysqli_fetch_assoc($applications_result)): ?>
+                                            <?php while ($app = $applications_result->fetch_assoc()): ?>
                                                 <div class="border border-[var(--border)] rounded-lg p-4 hover:bg-[var(--secondary)] transition">
                                                     <div class="flex items-center justify-between mb-3">
                                                         <div class="flex-1">

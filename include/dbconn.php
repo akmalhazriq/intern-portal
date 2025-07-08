@@ -3,7 +3,7 @@
 $user = "root"; //mysql username
 $pass = ""; //mysql password  
 $host = "localhost"; //server name or ip address
-$dbname = "intern-portal"; //your db name
+$dbname = "intern_portal"; //your db name
 
 // Create connection with error handling
 $dbconn = mysqli_connect($host, $user, $pass, $dbname);

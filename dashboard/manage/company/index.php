@@ -404,6 +404,51 @@
                                 <p class="text-[var(--muted)]">View and manage company verification status.</p>
                             </div>
                         </div>
+                        
+                        <!-- Success/Error Messages -->
+                        <?php if (isset($_GET['success'])): ?>
+                            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                                <?php
+                                    switch($_GET['success']) {
+                                        case 'company_verified':
+                                            echo 'Company has been successfully verified.';
+                                            break;
+                                        case 'company_unverified':
+                                            echo 'Company has been successfully unverified.';
+                                            break;
+                                        case 'company_deleted':
+                                            echo 'Company has been successfully deleted.';
+                                            break;
+                                        default:
+                                            echo 'Operation completed successfully.';
+                                    }
+                                ?>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <?php if (isset($_GET['error'])): ?>
+                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                                <?php
+                                    switch($_GET['error']) {
+                                        case 'unauthorized':
+                                            echo 'You are not authorized to perform this action.';
+                                            break;
+                                        case 'invalid_company':
+                                            echo 'Invalid company ID provided.';
+                                            break;
+                                        case 'company_not_found':
+                                            echo 'Company not found.';
+                                            break;
+                                        case 'operation_failed':
+                                            echo 'Operation failed. Please try again.';
+                                            break;
+                                        default:
+                                            echo 'An error occurred. Please try again.';
+                                    }
+                                ?>
+                            </div>
+                        <?php endif; ?>
+                        
                         <form method="GET" class="mb-4 flex gap-2">
                             <input type="text" name="search" placeholder="Search by company name..." value="<?php echo isset($_GET['search']) ? $_GET['search'] : ''; ?>" class="px-3 py-2 border border-[var(--border)] rounded-md w-64" />
                             <button type="submit" class="px-4 py-2 bg-[var(--primary)] text-white rounded-md">Search</button>
@@ -466,6 +511,32 @@
                                                     <button onclick="viewCompanyDetails(<?php echo $row['company_id']; ?>)" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs">
                                                         <i class="fas fa-eye mr-1"></i>View Details
                                                     </button>
+                                                    
+                                                    <?php if (!$row['verified']): ?>
+                                                        <form method="POST" action="../../../process.php" class="inline" onsubmit="return confirm('Are you sure you want to verify this company?');">
+                                                            <input type="hidden" name="action" value="verify_company">
+                                                            <input type="hidden" name="company_id" value="<?php echo $row['company_id']; ?>">
+                                                            <button type="submit" class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs">
+                                                                <i class="fas fa-check mr-1"></i>Verify
+                                                            </button>
+                                                        </form>
+                                                    <?php else: ?>
+                                                        <form method="POST" action="../../../process.php" class="inline" onsubmit="return confirm('Are you sure you want to unverify this company? This will disable their account.');">
+                                                            <input type="hidden" name="action" value="unverify_company">
+                                                            <input type="hidden" name="company_id" value="<?php echo $row['company_id']; ?>">
+                                                            <button type="submit" class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-xs">
+                                                                <i class="fas fa-times mr-1"></i>Unverify
+                                                            </button>
+                                                        </form>
+                                                    <?php endif; ?>
+                                                    
+                                                    <form method="POST" action="../../../process.php" class="inline" onsubmit="return confirm('Are you sure you want to delete this company? This will permanently delete all their data including vacancies and applications.');">
+                                                        <input type="hidden" name="action" value="delete_company">
+                                                        <input type="hidden" name="company_id" value="<?php echo $row['company_id']; ?>">
+                                                        <button type="submit" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs">
+                                                            <i class="fas fa-trash mr-1"></i>Delete
+                                                        </button>
+                                                    </form>
                                                 </div>
                                             </td>
                                         </tr>

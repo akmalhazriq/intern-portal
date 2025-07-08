@@ -4,29 +4,6 @@ session_start();
 
 // Include database connection settings
 include('./include/dbconn.php');
-include('./include/security.php');
-
-/if(isset($_POST['update_profile'])) {
-    $level = isset($_SESSION['level'])? $_SESSION['level'] : null;
-    
-    // Only handle user profiles (level 1 & 2) - companies use update_company_details
-    if($level != 3) {
-        $user_id = $_SESSION['user_id'];
-        $fullName = sanitizeInput($_POST['fullName']);
-        $email = sanitizeInput($_POST['email']);
-        $phoneNumber = sanitizeInput($_POST['phoneNumber']);
-        $password = $_POST['password'];
-        
-        if ($level == 2) {
-            // Student additional fields
-            $area = sanitizeInput($_POST['area']);
-            $state = sanitizeInput($_POST['state']);
-            $campus = sanitizeInput($_POST['campus']);
-            $course = sanitizeInput($_POST['course']);
-        }
-
-        $studentName = $fullName;ders
-setSecurityHeaders();
 
 // Student/Admin Login
 if(isset($_POST['login'])){

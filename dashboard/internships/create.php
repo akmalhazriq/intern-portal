@@ -72,12 +72,10 @@ if (isset($_GET['error'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create New Internship - FSKM Internship Portal</title>
     <link rel="stylesheet" href="../../global.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://cdn.tailwindcss.com" 
-            integrity="sha384-..." 
-            crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body>
@@ -147,7 +145,7 @@ if (isset($_GET['error'])) {
                             <div class="h-8 w-8 rounded-full overflow-hidden">
                                 <?php
                                 if ($logo) {
-                                    echo '<img src="../../src/company_logo/' . htmlspecialchars($logo) . '" alt="Company logo" class="h-full w-full object-cover" />';
+                                    echo '<img src="../../src/company_logo/' . htmlspecialchars($logo ?? '') . '" alt="Company logo" class="h-full w-full object-cover" />';
                                 } else {
                                     echo '<img src="https://cdn-icons-png.flaticon.com/512/3061/3061341.png" alt="Company logo" class="h-full w-full object-cover" />';
                                 }
@@ -155,7 +153,7 @@ if (isset($_GET['error'])) {
                             </div>
                             <div class="flex flex-col min-w-0">
                                 <span class="text-sm font-medium truncate max-w-64">
-                                    <?php echo htmlspecialchars($company_name); ?>
+                                    <?php echo htmlspecialchars($company_name ?? ''); ?>
                                 </span>
                                 <span class="text-xs text-[var(--muted)]">Company</span>
                             </div>
@@ -187,7 +185,7 @@ if (isset($_GET['error'])) {
                                 <div class="h-8 w-8 rounded-full overflow-hidden">
                                     <?php
                                     if ($logo) {
-                                        echo '<img src="../../src/company_logo/' . htmlspecialchars($logo) . '" alt="Company logo" class="h-full w-full object-cover" />';
+                                        echo '<img src="../../src/company_logo/' . htmlspecialchars($logo ?? '') . '" alt="Company logo" class="h-full w-full object-cover" />';
                                     } else {
                                         echo '<img src="https://cdn-icons-png.flaticon.com/512/3061/3061341.png" alt="Company logo" class="h-full w-full object-cover" />';
                                     }
@@ -330,9 +328,9 @@ if (isset($_GET['error'])) {
                                                 if ($semester_result && mysqli_num_rows($semester_result) > 0) {
                                                     while ($semester_row = mysqli_fetch_assoc($semester_result)) {
                                                         $semester_id = (int)$semester_row['semester_id'];
-                                                        $semester_name = htmlspecialchars($semester_row['semester_name'], ENT_QUOTES, 'UTF-8');
-                                                        $start_date = htmlspecialchars(date('M Y', strtotime($semester_row['start_date'])), ENT_QUOTES, 'UTF-8');
-                                                        $end_date = htmlspecialchars(date('M Y', strtotime($semester_row['end_date'])), ENT_QUOTES, 'UTF-8');
+                                                        $semester_name = htmlspecialchars($semester_row['semester_name'] ?? '', ENT_QUOTES, 'UTF-8');
+                                                        $start_date = htmlspecialchars(date('M Y', strtotime($semester_row['start_date'] ?? '')), ENT_QUOTES, 'UTF-8');
+                                                        $end_date = htmlspecialchars(date('M Y', strtotime($semester_row['end_date'] ?? '')), ENT_QUOTES, 'UTF-8');
                                                         echo '<option value="' . $semester_id . '">' . 
                                                              $semester_name . 
                                                              ' (' . $start_date . ' - ' . $end_date . ')</option>';

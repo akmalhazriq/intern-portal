@@ -61,9 +61,109 @@ if (isset($_SESSION['user_id'])) {
     <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+
+    <!-- Gift alert modal for first-time login users -->
+    <?php if (isset($_SESSION['show_gift_alert']) && $_SESSION['show_gift_alert']): ?>
+    <style>
+        #gift-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .gift-modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 350px;
+            animation: modal-pop 0.3s ease-out;
+        }
+        .gift-img {
+            max-width: 180px;
+            max-height: 180px;
+            margin: 15px auto;
+            display: block;
+        }
+        .gift-title {
+            color: #ff6b6b;
+            margin-bottom: 5px;
+        }
+        .gift-name {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin: 15px 0;
+            color: #333;
+        }
+        .gift-claim {
+            margin: 15px 0;
+            font-size: 1.1em;
+            color: #555;
+        }
+        .gift-btn {
+            background: #4a8cff;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        .gift-btn:hover {
+            background: #3a7ae8;
+        }
+        @keyframes modal-pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+    <?php endif; ?>
 </head>
 
 <body>
+    <!-- Gift alert modal -->
+    <?php if (isset($_SESSION['show_gift_alert']) && $_SESSION['show_gift_alert'] && isset($_SESSION['gift_name']) && isset($_SESSION['gift_image'])): ?>
+    <div id="gift-modal">
+        <div class="gift-modal-content">
+            <h2 class="gift-title">🎁 Congratulations!</h2>
+            <p>You've received a gift:</p>
+            <img src="../../src/gifts/<?php echo htmlspecialchars($_SESSION['gift_image'] ?? ''); ?>" alt="Gift" class="gift-img">
+            <p class="gift-name"><?php echo htmlspecialchars($_SESSION['gift_name'] ?? ''); ?></p>
+            <p class="gift-claim">Claim your gift at our booth!</p>
+            <button onclick="dismissGiftModal()" class="gift-btn">Awesome, Thanks!</button>
+        </div>
+    </div>
+    <script>
+    function dismissGiftModal() {
+        // Send AJAX request to mark the gift as seen
+        fetch('/api/dismiss_gift.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Hide the modal
+            document.getElementById('gift-modal').style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Hide the modal even if there's an error
+            document.getElementById('gift-modal').style.display = 'none';
+        });
+    }
+    </script>
+    <?php endif; ?>
+
     <div class="min-h-[100dvh] flex w-full bg-[var(--secondary)] text-[var(--foreground)]">
         <div class="fixed flex h-screen w-0 flex-col bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] transform transition-all duration-300 ease-in-out overflow-hidden z-20" id="sidebar">
             <div class="p-4">
@@ -555,7 +655,7 @@ if (isset($_SESSION['user_id'])) {
                                                             </div>
                                                             <div>
                                                                 <p class="font-medium"><?php echo $announcement['announcement_title']; ?></p>
-                                                                <div class="flex items-center gap-2 text-sm text-[var(--muted)]">
+                                                                <div class="flex items-center gap-2 text-sm text-[var,--muted)]">
                                                                     <span><?php echo date('F j, Y', strtotime($announcement['created_at'])); ?></span>
                                                                     <span>•</span>
                                                                     <span><?php echo $announcement['company_name']; ?></span>
@@ -587,7 +687,7 @@ if (isset($_SESSION['user_id'])) {
                                     ORDER BY a.applied_at DESC
                                     LIMIT 3";
                                 $result = mysqli_query($dbconn, $query);
-                                echo '<div class="rounded-lg border border-[var(--border)] bg-[var(--background)] shadow-sm transition-all hover:shadow-md">';
+                                echo '<div class="rounded-lg border border-[var,--border)] bg-[var,--background)] shadow-sm transition-all hover:shadow-md">';
                                 echo '<div class="flex flex-col space-y-1.5 p-6">';
                                 echo '<h3 class="flex items-center gap-2 text-2xl font-semibold leading-none tracking-tight">';
                                 echo '<i class="fas fa-briefcase h-5 w-5 text-[var(--primary)]"></i>';
@@ -639,7 +739,7 @@ if (isset($_SESSION['user_id'])) {
                                             WHERE v.company_id = $company_id 
                                             ORDER BY a.applied_at DESC LIMIT 5";
                                 $result = mysqli_query($dbconn, $query);
-                                echo '<div class="rounded-lg border border-[var(--border)] bg-[var(--background)] shadow-sm transition-all hover:shadow-md">';
+                                echo '<div class="rounded-lg border border-[var,--border)] bg-[var,--background)] shadow-sm transition-all hover:shadow-md">';
                                 echo '<div class="flex flex-col space-y-1.5 p-6">';
                                 echo '<h3 class="flex items-center gap-2 text-2xl font-semibold leading-none tracking-tight">';
                                 echo '<i class="fa-solid fa-clock-rotate-left h-5 w-5 text-[var(--primary)]"></i> &nbsp;Latest Applications';
@@ -681,7 +781,7 @@ if (isset($_SESSION['user_id'])) {
                                 $applicantResult = mysqli_query($dbconn, $applicantQuery);
                                 $vacancyResult = mysqli_query($dbconn, $vacancyQuery);
                         ?>
-                            <div class="rounded-lg border border-[var(--border)] bg-[var(--background)] shadow-sm transition-all hover:shadow-md">
+                            <div class="rounded-lg border border-[var,--border)] bg-[var,--background)] shadow-sm transition-all hover:shadow-md">
                                 <div class="flex flex-col space-y-1.5 p-6">
                                     <h3 class="flex items-center gap-2 text-2xl font-semibold leading-none tracking-tight">
                                         <i class="fa-solid fa-chart-pie h-5 w-5 text-[var(--primary)]"></i> &nbsp;Analytics
@@ -765,17 +865,17 @@ if (isset($_SESSION['user_id'])) {
                             $companyCount = mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) as total FROM company"))['total'];
                             $internshipCount = mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) as total FROM vacancy"))['total'];
                             $applicationCount = mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) as total FROM applicant"))['total'];
-                            echo '<div class="rounded-lg border border-[var(--border)] bg-[var(--background)] shadow-sm transition-all hover:shadow-md mb-6">';
+                            echo '<div class="rounded-lg border border-[var,--border)] bg-[var,--background)] shadow-sm transition-all hover:shadow-md mb-6">';
                             echo '<div class="flex flex-col space-y-1.5 p-6">';
                             echo '<h3 class="flex items-center gap-2 text-2xl font-semibold leading-none tracking-tight">';
                             echo '<i class="fa-solid fa-chart-simple h-5 w-5 text-[var(--primary)]"></i>';
                             echo 'Platform Statistics';
                             echo '</h3>';
                             echo '<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4">';
-                            echo '<div class="text-center"><div class="text-3xl font-bold">' . $userCount . '</div><div class="text-sm text-[var(--muted)]">Users</div></div>';
-                            echo '<div class="text-center"><div class="text-3xl font-bold">' . $companyCount . '</div><div class="text-sm text-[var(--muted)]">Companies</div></div>';
-                            echo '<div class="text-center"><div class="text-3xl font-bold">' . $internshipCount . '</div><div class="text-sm text-[var(--muted)]">Internships</div></div>';
-                            echo '<div class="text-center"><div class="text-3xl font-bold">' . $applicationCount . '</div><div class="text-sm text-[var(--muted)]">Applications</div></div>';
+                            echo '<div class="text-center"><div class="text-3xl font-bold">' . $userCount . '</div><div class="text-sm text-[var,--muted)]">Users</div></div>';
+                            echo '<div class="text-center"><div class="text-3xl font-bold">' . $companyCount . '</div><div class="text-sm text-[var,--muted)]">Companies</div></div>';
+                            echo '<div class="text-center"><div class="text-3xl font-bold">' . $internshipCount . '</div><div class="text-sm text-[var,--muted)]">Internships</div></div>';
+                            echo '<div class="text-center"><div class="text-3xl font-bold">' . $applicationCount . '</div><div class="text-sm text-[var,--muted)]">Applications</div></div>';
                             echo '</div>';
                             echo '</div>';
                             // Recent activity (latest 5 applications)
@@ -787,12 +887,12 @@ if (isset($_SESSION['user_id'])) {
                                 while ($app = mysqli_fetch_assoc($recentApps)) {
                                     echo '<li class="py-2 flex justify-between items-center">';
                                     echo '<span><strong>' . $app['user_name'] . '</strong> applied for <strong>' . $app['internship_title'] . '</strong></span>';
-                                    echo '<span class="text-xs text-[var(--muted)]">' . date('M d, Y', strtotime($app['applied_at'])) . '</span>';
+                                    echo '<span class="text-xs text-[var,--muted)]">' . date('M d, Y', strtotime($app['applied_at'])) . '</span>';
                                     echo '</li>';
                                 }
                                 echo '</ul>';
                             } else {
-                                echo '<div class="text-sm text-[var(--muted)]">No recent applications found.</div>';
+                                echo '<div class="text-sm text-[var,--muted)]">No recent applications found.</div>';
                             }
                             echo '</div>';
                             echo '</div>';
@@ -804,19 +904,19 @@ if (isset($_SESSION['user_id'])) {
                             include_once('../include/dbconn.php');
                             $query = "SELECT v.*, c.company_name FROM vacancy v JOIN company c ON v.company_id = c.company_id WHERE v.vacancy_status_id = 1 ORDER BY v.created_at DESC LIMIT 6";
                             $result = mysqli_query($dbconn, $query);
-                            echo '<div class="rounded-lg border border-[var(--border)] bg-[var(--background)] shadow-sm transition-all hover:shadow-md">';
+                            echo '<div class="rounded-lg border border-[var,--border)] bg-[var,--background)] shadow-sm transition-all hover:shadow-md">';
                             echo '<div class="flex flex-col space-y-1.5 p-6">';
                             echo '<h3 class="flex items-center gap-2 text-2xl font-semibold leading-none tracking-tight">';
                             echo '<i class="fas fa-building h-5 w-5 text-[var(--primary)]"></i>';
                             echo 'Recommended Internships';
                             echo '</h3>';
-                            echo '<p class="text-sm text-[var(--muted)]">Based on your profile and preferences</p>';
+                            echo '<p class="text-sm text-[var,--muted)]">Based on your profile and preferences</p>';
                             echo '</div>';
                             echo '<div class="p-6 pt-0">';
                             echo '<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">';
                             if (mysqli_num_rows($result) > 0) {
                                 while ($internship = mysqli_fetch_assoc($result)) {
-                                    echo '<div class="rounded-lg border border-[var(--border)] p-3 transition-all hover:shadow">';
+                                    echo '<div class="rounded-lg border border-[var,--border)] p-3 transition-all hover:shadow">';
                                     echo '<div class="flex items-center justify-between">';
                                     echo '<div class="flex items-center gap-2">';
                                     echo '<div class="h-10 w-10 rounded bg-[var(--secondary)] flex items-center justify-center">';
@@ -824,7 +924,7 @@ if (isset($_SESSION['user_id'])) {
                                     echo '</div>';
                                     echo '<div>';
                                     echo '<p class="font-medium">' . $internship['title'] . '</p>';
-                                    echo '<p class="text-sm text-[var(--muted)]">' . $internship['company_name'] . '</p>';
+                                    echo '<p class="text-sm text-[var,--muted)]">' . $internship['company_name'] . '</p>';
                                     echo '</div>';
                                     echo '</div>';
                                     echo '</div>';
@@ -836,7 +936,7 @@ if (isset($_SESSION['user_id'])) {
                                     echo '</div>';
                                 }
                             } else {
-                                echo '<div class="text-sm text-[var(--muted)]">No recommended internships found.</div>';
+                                echo '<div class="text-sm text-[var,--muted)]">No recommended internships found.</div>';
                             }
                             echo '</div>';
                             echo '</div>';

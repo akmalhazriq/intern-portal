@@ -268,14 +268,14 @@
                                     if ($level == 3) {
                                         // Company
                                         if ($logo) {
-                                            echo '<img src="../../src/company_logo/' . htmlspecialchars($logo) . '" alt="Company logo" class="h-full w-full object-cover" />';
+                                            echo '<img src="../../src/company_logo/' . htmlspecialchars($logo ?? '') . '" alt="Company logo" class="h-full w-full object-cover" />';
                                         } else {
                                             echo '<img src="https://cdn-icons-png.flaticon.com/512/3061/3061341.png" alt="Company logo" class="h-full w-full object-cover" />';
                                         }
                                     } else {
                                         // User
                                         if ($profile_picture) {
-                                            echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture) . '" alt="User avatar" class="h-full w-full object-cover" />';
+                                            echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture ?? '') . '" alt="User avatar" class="h-full w-full object-cover" />';
                                         } else {
                                             if ($level == 1) {
                                                 echo '<img src="https://cdn-icons-png.flaticon.com/512/6024/6024190.png" alt="User avatar" class="h-full w-full object-cover" />';
@@ -290,9 +290,9 @@
                                 <span class="text-sm font-medium truncate max-w-64">
                                     <?php
                                         if ($level == 3) {
-                                            echo htmlspecialchars($company_name);
+                                            echo htmlspecialchars($company_name ?? '');
                                         } else {
-                                            echo htmlspecialchars($full_name);
+                                            echo htmlspecialchars($full_name ?? '');
                                         }
                                     ?>
                                 </span>
@@ -346,14 +346,14 @@
                                         if ($level == 3) {
                                             // Company
                                             if ($logo) {
-                                                echo '<img src="../../src/company_logo/' . htmlspecialchars($logo) . '" alt="Company logo" class="h-full w-full object-cover" />';
+                                                echo '<img src="../../src/company_logo/' . htmlspecialchars($logo ?? '') . '" alt="Company logo" class="h-full w-full object-cover" />';
                                             } else {
                                                 echo '<img src="https://cdn-icons-png.flaticon.com/512/3061/3061341.png" alt="Company logo" class="h-full w-full object-cover" />';
                                             }
                                         } else {
                                             // User
                                             if ($profile_picture) {
-                                                echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture) . '" alt="User avatar" class="h-full w-full object-cover" />';
+                                                echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture ?? '') . '" alt="User avatar" class="h-full w-full object-cover" />';
                                             } else {
                                                 if ($level == 1) {
                                                     echo '<img src="https://cdn-icons-png.flaticon.com/512/6024/6024190.png" alt="User avatar" class="h-full w-full object-cover" />';
@@ -412,14 +412,14 @@
                                             if ($level == 3) {
                                                 // Company
                                                 if ($logo) {
-                                                    echo '<img src="../../src/company_logo/' . htmlspecialchars($logo) . '" alt="Company logo" class="h-full w-full object-cover" />';
+                                                    echo '<img src="../../src/company_logo/' . htmlspecialchars($logo ?? '') . '" alt="Company logo" class="h-full w-full object-cover" />';
                                                 } else {
                                                     echo '<img src="https://cdn-icons-png.flaticon.com/512/3061/3061341.png" alt="Company logo" class="h-full w-full object-cover" />';
                                                 }
                                             } else {
                                                 // User
                                                 if ($profile_picture) {
-                                                    echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture) . '" alt="User avatar" class="h-full w-full object-cover" />';
+                                                    echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture ?? '') . '" alt="User avatar" class="h-full w-full object-cover" />';
                                                 } else {
                                                     if ($level == 1) {
                                                         echo '<img src="https://cdn-icons-png.flaticon.com/512/6024/6024190.png" alt="User avatar" class="h-full w-full object-cover" />';
@@ -434,9 +434,9 @@
                                         <h2 class="text-2xl font-semibold">
                                             <?php 
                                                 if ($level == 3) {
-                                                    echo htmlspecialchars($company_name);
+                                                    echo htmlspecialchars($company_name ?? '');
                                                 } else {
-                                                    echo htmlspecialchars($full_name);
+                                                    echo htmlspecialchars($full_name ?? '');
                                                 }
                                             ?>
                                         </h2>
@@ -464,9 +464,9 @@
                                         <span class="text-sm">
                                             <?php 
                                                 if ($level == 3) {
-                                                    echo htmlspecialchars($email_company);
+                                                    echo htmlspecialchars($email_company ?? '');
                                                 } else {
-                                                    echo htmlspecialchars($email);
+                                                    echo htmlspecialchars($email ?? '');
                                                 }
                                             ?>
                                         </span>
@@ -476,9 +476,9 @@
                                         <span class="text-sm">
                                             <?php 
                                                 if ($level == 3) {
-                                                    echo htmlspecialchars($phone);
+                                                    echo htmlspecialchars($phone ?? '');
                                                 } else {
-                                                    echo htmlspecialchars($phone_number);
+                                                    echo htmlspecialchars($phone_number ?? '');
                                                 }
                                             ?>
                                         </span>
@@ -486,21 +486,21 @@
                                     <?php if ($level != 3): ?>
                                         <div class="flex items-center gap-2">
                                             <i class="fas fa-map-marker-alt h-4 w-4 text-[var(--muted)]"></i>
-                                            <span class="text-sm"><?php echo htmlspecialchars($area); ?><br/> <?php echo htmlspecialchars($state); ?></span>
+                                            <span class="text-sm"><?php echo htmlspecialchars($area ?? ''); ?><br/> <?php echo htmlspecialchars($state ?? ''); ?></span>
                                         </div>
                                         <div class="flex items-center gap-2">
                                             <i class="fas fa-graduation-cap h-4 w-4 text-[var(--muted)]"></i>
-                                            <span class="text-sm"><?php echo htmlspecialchars($campus); ?></span>
+                                            <span class="text-sm"><?php echo htmlspecialchars($campus ?? ''); ?></span>
                                         </div>
                                     <?php else: ?>
                                         <div class="flex items-center gap-2">
                                             <i class="fas fa-map-marker-alt h-4 w-4 text-[var(--muted)]"></i>
-                                            <span class="text-sm"><?php echo htmlspecialchars($area_company); ?><br/> <?php echo htmlspecialchars($state_company); ?></span>
+                                            <span class="text-sm"><?php echo htmlspecialchars($area_company ?? ''); ?><br/> <?php echo htmlspecialchars($state_company ?? ''); ?></span>
                                         </div>
                                         <?php if ($website): ?>
                                             <div class="flex items-center gap-2">
                                                 <i class="fas fa-globe h-4 w-4 text-[var(--muted)]"></i>
-                                                <span class="text-sm"><?php echo htmlspecialchars($website); ?></span>
+                                                <span class="text-sm"><?php echo htmlspecialchars($website ?? ''); ?></span>
                                             </div>
                                         <?php endif; ?>
                                     <?php endif; ?>
@@ -542,26 +542,26 @@
                                                             <?php echo ($level == 3) ? 'Company Name' : 'Full Name'; ?>
                                                         </label>
                                                         <div class="relative flex items-center">
-                                                            <input type="text" name="fullName" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="<?php echo ($level == 3) ? 'Company Name' : 'Full Name'; ?>" value="<?php echo ($level == 3) ? htmlspecialchars($company_name) : htmlspecialchars($full_name); ?>">
+                                                            <input type="text" name="fullName" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="<?php echo ($level == 3) ? 'Company Name' : 'Full Name'; ?>" value="<?php echo ($level == 3) ? htmlspecialchars($company_name ?? '') : htmlspecialchars($full_name ?? ''); ?>">
                                                         </div>
                                                     </div>
                                                     <div>
                                                         <label for="email" class="text-sm font-medium mb-1 block">Email</label>
                                                         <div class="relative flex items-center">
-                                                            <input type="text" name="email" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Email" value="<?php echo ($level == 3) ? htmlspecialchars($email_company) : htmlspecialchars($email); ?>">
+                                                            <input type="text" name="email" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Email" value="<?php echo ($level == 3) ? htmlspecialchars($email_company ?? '') : htmlspecialchars($email ?? ''); ?>">
                                                         </div>
                                                     </div>
                                                     <div>
                                                         <label for="phoneNumber" class="text-sm font-medium mb-1 block">Phone Number</label>
                                                         <div class="relative flex items-center">
-                                                            <input type="text" name="phoneNumber" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Phone Number" value="<?php echo ($level == 3) ? htmlspecialchars($phone) : htmlspecialchars($phone_number); ?>">
+                                                            <input type="text" name="phoneNumber" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Phone Number" value="<?php echo ($level == 3) ? htmlspecialchars($phone ?? '') : htmlspecialchars($phone_number ?? ''); ?>">
                                                         </div>
                                                     </div>
                                                     <?php if ($level != 3): ?>
                                                     <div>
                                                         <label for="password" class="text-sm font-medium mb-1 block">Password</label>
                                                         <div class="relative flex items-center">
-                                                            <input type="password" name="password" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Password" value="<?php echo isset($user) ? htmlspecialchars($user['password']) : ''; ?>">
+                                                            <input type="password" name="password" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Password" value="<?php echo isset($user) ? htmlspecialchars($user['password'] ?? '') : ''; ?>">
                                                         </div>
                                                     </div>
                                                     <?php endif; ?>
@@ -569,25 +569,25 @@
                                                             <div>
                                                                 <label for="area" class="text-sm font-medium mb-1 block">Area</label>
                                                                 <div class="relative flex items-center">
-                                                                    <input type="text" name="area" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Area" value="<?php echo htmlspecialchars($area); ?>">
+                                                                    <input type="text" name="area" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Area" value="<?php echo htmlspecialchars($area ?? ''); ?>">
                                                                 </div>
                                                             </div>
                                                             <div>
                                                                 <label for="state" class="text-sm font-medium mb-1 block">State</label>
                                                                 <div class="relative flex items-center">
-                                                                    <input type="text" name="state" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="State" value="<?php echo htmlspecialchars($state); ?>">
+                                                                    <input type="text" name="state" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="State" value="<?php echo htmlspecialchars($state ?? ''); ?>">
                                                                 </div>
                                                             </div>
                                                             <div>
                                                                 <label for="campus" class="text-sm font-medium mb-1 block">Campus</label>
                                                                 <div class="relative flex items-center">
-                                                                    <input type="text" name="campus" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Campus" value="<?php echo htmlspecialchars($campus); ?>">
+                                                                    <input type="text" name="campus" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Campus" value="<?php echo htmlspecialchars($campus ?? ''); ?>">
                                                                 </div>
                                                             </div>
                                                             <div>
                                                                 <label for="course" class="text-sm font-medium mb-1 block">Course</label>
                                                                 <div class="relative flex items-center">
-                                                                    <input type="text" name="course" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Course" value="<?php echo htmlspecialchars($course); ?>">
+                                                                    <input type="text" name="course" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Course" value="<?php echo htmlspecialchars($course ?? ''); ?>">
                                                                 </div>
                                                             </div>
                                                     <?php endif; ?>
@@ -598,14 +598,14 @@
                                                                 if ($level == 3) {
                                                                     // Company - show logo
                                                                     if ($logo) {
-                                                                        echo '<img src="../../src/company_logo/' . htmlspecialchars($logo) . '" alt="Company logo" class="h-full w-full object-cover" id="profile-img"/>';
+                                                                        echo '<img src="../../src/company_logo/' . htmlspecialchars($logo ?? '') . '" alt="Company logo" class="h-full w-full object-cover" id="profile-img"/>';
                                                                     } else {
                                                                         echo '<img src="https://cdn-icons-png.flaticon.com/512/3061/3061341.png" alt="Company logo" class="h-full w-full object-cover" id="profile-img"/>';
                                                                     }
                                                                 } else {
                                                                     // User - show profile picture
                                                                     if ($profile_picture) {
-                                                                        echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture) . '" alt="User avatar" class="h-full w-full object-cover" id="profile-img"/>';
+                                                                        echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture ?? '') . '" alt="User avatar" class="h-full w-full object-cover" id="profile-img"/>';
                                                                     } else {
                                                                         if ($level == 1) {
                                                                             echo '<img src="https://cdn-icons-png.flaticon.com/512/6024/6024190.png" alt="User avatar" class="h-full w-full object-cover" id="profile-img"/>';
@@ -638,7 +638,7 @@
                                         <div class="flex flex-col p-6">
                                             <div class="flex flex-row gap-1">
                                                 <h3 class="text-2xl font-semibold leading-none tracking-light">
-                                                    <?php echo htmlspecialchars($company_name); ?>
+                                                    <?php echo htmlspecialchars($company_name ?? ''); ?>
                                                 </h3>
                                                 <?php
                                                     if (isset($company) && $company['verified'] == 1) {
@@ -672,7 +672,7 @@
                                                         <div class="h-40 w-full rounded-lg overflow-hidden bg-[var(--secondary)] flex items-center justify-center">
                                                             <?php
                                                                 if ($banner) {
-                                                                    echo '<img src="../../src/company_banner/' . htmlspecialchars($banner) . '" alt="Company Banner" class="h-full w-full object-cover" id="company-banner-img"/>';
+                                                                    echo '<img src="../../src/company_banner/' . htmlspecialchars($banner ?? '') . '" alt="Company Banner" class="h-full w-full object-cover" id="company-banner-img"/>';
                                                                 } else {
                                                                     echo '<img src="https://picsum.photos/id/1/800/200" alt="Company Banner" class="h-full w-full object-cover" id="company-banner-img"/>';
                                                                 }
@@ -688,7 +688,7 @@
                                                             <!-- Company Logo -->
                                                             <?php
                                                                 if ($logo) {
-                                                                    echo '<img src="../../src/company_logo/' . htmlspecialchars($logo) . '" alt="Company logo" class="h-full w-full object-cover" id="company-logo-img"/>';
+                                                                    echo '<img src="../../src/company_logo/' . htmlspecialchars($logo ?? '') . '" alt="Company logo" class="h-full w-full object-cover" id="company-logo-img"/>';
                                                                 } else {
                                                                     echo '<img src="https://cdn-icons-png.flaticon.com/512/3061/3061341.png" alt="Company logo" class="h-full w-full object-cover" id="company-logo-img"/>';
                                                                 }
@@ -704,37 +704,37 @@
                                                     <div>
                                                         <label for="companyName" class="text-sm font-medium mb-1 block">Company Name</label>
                                                         <div class="relative flex items-center">
-                                                            <input type="text" name="companyName" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Company Name" value="<?php echo htmlspecialchars($company_name); ?>">
+                                                            <input type="text" name="companyName" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Company Name" value="<?php echo htmlspecialchars($company_name ?? ''); ?>">
                                                         </div>
                                                     </div>
                                                     <div>
                                                         <label for="companyEmail" class="text-sm font-medium mb-1 block">Company Email</label>
                                                         <div class="relative flex items-center">
-                                                            <input type="email" name="companyEmail" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Company Email" value="<?php echo htmlspecialchars($email_company); ?>">
+                                                            <input type="email" name="companyEmail" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Company Email" value="<?php echo htmlspecialchars($email_company ?? ''); ?>">
                                                         </div>
                                                     </div>
                                                     <div>
                                                         <label for="companyWebsite" class="text-sm font-medium mb-1 block">Company Website</label>
                                                         <div class="relative flex items-center">
-                                                            <input type="url" name="companyWebsite" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Company Website" value="<?php echo htmlspecialchars($website); ?>">
+                                                            <input type="url" name="companyWebsite" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Company Website" value="<?php echo htmlspecialchars($website ?? ''); ?>">
                                                         </div>
                                                     </div>
                                                     <div>
                                                         <label for="companyPhoneNumber" class="text-sm font-medium mb-1 block">Company Phone Number</label>
                                                         <div class="relative flex items-center">
-                                                            <input type="text" name="companyPhoneNumber" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Company Phone Number" value="<?php echo htmlspecialchars($phone); ?>">
+                                                            <input type="text" name="companyPhoneNumber" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Company Phone Number" value="<?php echo htmlspecialchars($phone ?? ''); ?>">
                                                         </div>
                                                     </div>
                                                     <div>
                                                         <label for="companyArea" class="text-sm font-medium mb-1 block">Company Area</label>
                                                         <div class="relative flex items-center">
-                                                            <input type="text" name="companyArea" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Company Area" value="<?php echo htmlspecialchars($area_company); ?>">
+                                                            <input type="text" name="companyArea" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Company Area" value="<?php echo htmlspecialchars($area_company ?? ''); ?>">
                                                         </div>
                                                     </div>
                                                     <div>
                                                         <label for="companyState" class="text-sm font-medium mb-1 block">Company State</label>
                                                         <div class="relative flex items-center">
-                                                            <input type="text" name="companyState" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Company State" value="<?php echo htmlspecialchars($state_company); ?>">
+                                                            <input type="text" name="companyState" class="w-full text-sm border border-[var(--border)] shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)] text-[var(--foreground)] bg-[var(--input)]" placeholder="Company State" value="<?php echo htmlspecialchars($state_company ?? ''); ?>">
                                                         </div>
                                                     </div>
                                                     <div class="flex justify-end">

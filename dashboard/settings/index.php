@@ -279,14 +279,14 @@
                                     if ($level == 3) {
                                         // Company
                                         if ($logo) {
-                                            echo '<img src="../../src/company_logo/' . htmlspecialchars($logo) . '" alt="Company logo" class="h-full w-full object-cover" />';
+                                            echo '<img src="../../src/company_logo/' . htmlspecialchars($logo ?? '') . '" alt="Company logo" class="h-full w-full object-cover" />';
                                         } else {
                                             echo '<img src="https://cdn-icons-png.flaticon.com/512/3061/3061341.png" alt="Company logo" class="h-full w-full object-cover" />';
                                         }
                                     } else {
                                         // User
                                         if ($profile_picture) {
-                                            echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture) . '" alt="User avatar" class="h-full w-full object-cover" />';
+                                            echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture ?? '') . '" alt="User avatar" class="h-full w-full object-cover" />';
                                         } else {
                                             if ($level == 1) {
                                                 echo '<img src="https://cdn-icons-png.flaticon.com/512/6024/6024190.png" alt="User avatar" class="h-full w-full object-cover" />';
@@ -299,7 +299,7 @@
                             </div>
                             <div class="flex flex-col min-w-0">
                                 <span class="text-sm font-medium truncate max-w-64">
-                                    <?php echo htmlspecialchars($full_name); ?>
+                                    <?php echo htmlspecialchars($full_name ?? ''); ?>
                                 </span>
                                 <span class="text-xs text-[var(--muted)]">
                                     <?php
@@ -351,14 +351,14 @@
                                         if ($level == 3) {
                                             // Company
                                             if ($logo) {
-                                                echo '<img src="../../src/company_logo/' . htmlspecialchars($logo) . '" alt="Company logo" class="h-full w-full object-cover" />';
+                                                echo '<img src="../../src/company_logo/' . htmlspecialchars($logo ?? '') . '" alt="Company logo" class="h-full w-full object-cover" />';
                                             } else {
                                                 echo '<img src="https://cdn-icons-png.flaticon.com/512/3061/3061341.png" alt="Company logo" class="h-full w-full object-cover" />';
                                             }
                                         } else {
                                             // User
                                             if ($profile_picture) {
-                                                echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture) . '" alt="User avatar" class="h-full w-full object-cover" />';
+                                                echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture ?? '') . '" alt="User avatar" class="h-full w-full object-cover" />';
                                             } else {
                                                 if ($level == 1) {
                                                     echo '<img src="https://cdn-icons-png.flaticon.com/512/6024/6024190.png" alt="User avatar" class="h-full w-full object-cover" />';

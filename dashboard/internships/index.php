@@ -276,14 +276,14 @@
                                     if ($level == 3) {
                                         // Company
                                         if (isset($logo) && $logo) {
-                                            echo '<img src="../../src/company_logo/' . htmlspecialchars($logo) . '" alt="Company logo" class="h-full w-full object-cover" />';
+                                            echo '<img src="../../src/company_logo/' . htmlspecialchars($logo ?? '') . '" alt="Company logo" class="h-full w-full object-cover" />';
                                         } else {
                                             echo '<img src="https://cdn-icons-png.flaticon.com/512/3061/3061341.png" alt="Company logo" class="h-full w-full object-cover" />';
                                         }
                                     } else {
                                         // User
                                         if (isset($profile_picture) && $profile_picture) {
-                                            echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture) . '" alt="User avatar" class="h-full w-full object-cover" />';
+                                            echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture ?? '') . '" alt="User avatar" class="h-full w-full object-cover" />';
                                         } else {
                                             if ($level == 1) {
                                                 echo '<img src="https://cdn-icons-png.flaticon.com/512/6024/6024190.png" alt="User avatar" class="h-full w-full object-cover" />';
@@ -298,9 +298,9 @@
                                 <span class="text-sm font-medium truncate max-w-64">
                                     <?php
                                         if ($level == 3) {
-                                            echo isset($company_name) ? htmlspecialchars($company_name) : 'Company';
+                                            echo isset($company_name) ? htmlspecialchars($company_name ?? '') : 'Company';
                                         } else {
-                                            echo isset($full_name) ? htmlspecialchars($full_name) : 'User';
+                                            echo isset($full_name) ? htmlspecialchars($full_name ?? '') : 'User';
                                         }
                                     ?>
                                 </span>
@@ -354,14 +354,14 @@
                                         if ($level == 3) {
                                             // Company
                                             if (isset($logo) && $logo) {
-                                                echo '<img src="../../src/company_logo/' . htmlspecialchars($logo) . '" alt="Company logo" class="h-full w-full object-cover" />';
+                                                echo '<img src="../../src/company_logo/' . htmlspecialchars($logo ?? '') . '" alt="Company logo" class="h-full w-full object-cover" />';
                                             } else {
                                                 echo '<img src="https://cdn-icons-png.flaticon.com/512/3061/3061341.png" alt="Company logo" class="h-full w-full object-cover" />';
                                             }
                                         } else {
                                             // User
                                             if (isset($profile_picture) && $profile_picture) {
-                                                echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture) . '" alt="User avatar" class="h-full w-full object-cover" />';
+                                                echo '<img src="../../src/profile_picture/' . htmlspecialchars($profile_picture ?? '') . '" alt="User avatar" class="h-full w-full object-cover" />';
                                             } else {
                                                 if ($level == 1) {
                                                     echo '<img src="https://cdn-icons-png.flaticon.com/512/6024/6024190.png" alt="User avatar" class="h-full w-full object-cover" />';
@@ -403,7 +403,7 @@
                     <div class="space-y-6">
                         <div class="flex flex-row items-center justify-between">
                             <div>
-                                <h1 class="text-3xl font-bold tracking-tight">Welcome, <?php echo htmlspecialchars($company_name); ?>!</h1>
+                                <h1 class="text-3xl font-bold tracking-tight">Welcome, <?php echo htmlspecialchars($company_name ?? ''); ?>!</h1>
                                 <p class="text-[var(--muted)]">Manage your company profile and internships.</p>
                             </div>
                             <div>

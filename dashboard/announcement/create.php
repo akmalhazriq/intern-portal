@@ -7,10 +7,12 @@
     if (isset($_SESSION['user_id'])) {
         // Student/Admin
         $user_id = $_SESSION['user_id'];
-        $query = "SELECT * FROM user WHERE user_id = $user_id";
-        $result = mysqli_query($dbconn, $query);
+        $stmt = $dbconn->prepare("SELECT * FROM user WHERE user_id = ?");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
         if ($result) {
-            $user = mysqli_fetch_assoc($result);
+            $user = $result->fetch_assoc();
             $full_name = $user['full_name'];
             $email = $user['email'];
             $area = $user['area'];
@@ -24,10 +26,12 @@
     } elseif (isset($_SESSION['company_id'])) {
         // Company
         $company_id = $_SESSION['company_id'];
-        $queryCompany = "SELECT * FROM company WHERE company_id = $company_id";
-        $resultCompany = mysqli_query($dbconn, $queryCompany);
-        if ($resultCompany && mysqli_num_rows($resultCompany) > 0) {
-            $company = mysqli_fetch_assoc($resultCompany);
+        $stmt = $dbconn->prepare("SELECT * FROM company WHERE company_id = ?");
+        $stmt->bind_param("i", $company_id);
+        $stmt->execute();
+        $resultCompany = $stmt->get_result();
+        if ($resultCompany && $resultCompany->num_rows > 0) {
+            $company = $resultCompany->fetch_assoc();
             $company_name = $company['company_name'];
             $phone = $company['phone'];
             $email_company = $company['email'];
