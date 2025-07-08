@@ -1,96 +1,111 @@
-const notificationButton = document.getElementById('notification-button');
-const notificationDropdown = document.getElementById('notification-dropdown');
+document.addEventListener('DOMContentLoaded', function() {
+    // Notification dropdown functionality
+    const notificationButton = document.getElementById('notification-button');
+    const notificationDropdown = document.getElementById('notification-dropdown');
 
-notificationButton.addEventListener('click', () => {
-    notificationDropdown.classList.toggle('hidden');
-});
-
-const profileButton = document.getElementById('user-profile-button');
-const profileDropdown = document.getElementById('user-profile-dropdown');
-
-profileButton.addEventListener('click', () => {
-    profileDropdown.classList.toggle('hidden');
-});
-
-document.addEventListener('click', (event) => {
-    if (!notificationButton.contains(event.target) && !notificationDropdown.contains(event.target)) {
-        notificationDropdown.classList.add('hidden');
+    if (notificationButton && notificationDropdown) {
+        notificationButton.addEventListener('click', () => {
+            notificationDropdown.classList.toggle('hidden');
+        });
     }
-    
-    if (!profileButton.contains(event.target) && !profileDropdown.contains(event.target)) {
-        profileDropdown.classList.add('hidden');
+
+    // Profile dropdown functionality
+    const profileButton = document.getElementById('user-profile-button');
+    const profileDropdown = document.getElementById('user-profile-dropdown');
+
+    if (profileButton && profileDropdown) {
+        profileButton.addEventListener('click', () => {
+            profileDropdown.classList.toggle('hidden');
+        });
     }
-});
 
-const sidebarToggle = document.getElementById('sidebar-toggle');
-const sidebar = document.getElementById('sidebar');
-const mainContent = document.getElementById('main-content');
-
-// Track sidebar state
-let sidebarOpen = true;
-
-sidebarToggle.addEventListener('click', () => {
-    sidebarOpen = !sidebarOpen;
-    
-    if (sidebarOpen) {
-        // Open sidebar with animation
-        sidebar.classList.remove('-translate-x-full');
-        sidebar.classList.remove('w-0');
-        sidebar.classList.add('w-64');
-        sidebar.classList.add('translate-x-0');
-        mainContent.classList.add('ml-64');
-        mainContent.classList.remove('ml-0');
-    } else {
-        // Close sidebar with animation
-        sidebar.classList.remove('translate-x-0');
-        sidebar.classList.remove('w-64');
-        sidebar.classList.add('w-0');
-        sidebar.classList.add('-translate-x-full');
-        mainContent.classList.remove('ml-64');
-        mainContent.classList.add('ml-0');
-    }
-});
-
-// Initialize sidebar state based on screen size
-function initializeSidebar() {
-    if (window.innerWidth < 768) {
-        sidebar.classList.add('-translate-x-full');
-        sidebar.classList.remove('translate-x-0');
-        sidebar.classList.remove('w-64');
-        sidebar.classList.add('w-0');
-        mainContent.classList.remove('ml-64');
-        mainContent.classList.add('ml-0');
-        sidebarOpen = false;
-    } else {
-        sidebar.classList.add('translate-x-0');
-        sidebar.classList.remove('-translate-x-full');
-        sidebar.classList.remove('w-0');
-        sidebar.classList.add('w-64');
-        mainContent.classList.add('ml-64');
-        mainContent.classList.remove('ml-0');
-        sidebarOpen = true;
-    }
-}
-
-// Run on page load
-initializeSidebar();
-
-// Also run when window is resized
-window.addEventListener('resize', initializeSidebar);
-
-if (window.innerWidth <= 768) {
+    // Close dropdowns when clicking outside
     document.addEventListener('click', (event) => {
-        if (!sidebarToggle.contains(event.target) &&!sidebar.contains(event.target)) {
-            sidebar.classList.add('-translate-x-full');
-            sidebar.classList.remove('translate-x-0');
-            sidebar.classList.remove('w-64');
-            sidebar.classList.add('w-0');
-            mainContent.classList.remove('ml-64');
-            mainContent.classList.add('ml-0');
-            sidebarOpen = false;
+        if (notificationButton && notificationDropdown && 
+            !notificationButton.contains(event.target) && !notificationDropdown.contains(event.target)) {
+            notificationDropdown.classList.add('hidden');
+        }
+        
+        if (profileButton && profileDropdown && 
+            !profileButton.contains(event.target) && !profileDropdown.contains(event.target)) {
+            profileDropdown.classList.add('hidden');
         }
     });
-}
+
+    // Sidebar functionality
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('main-content');
+
+    if (sidebarToggle && sidebar && mainContent) {
+        // Track sidebar state
+        let sidebarOpen = true;
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebarOpen = !sidebarOpen;
+            
+            if (sidebarOpen) {
+                // Open sidebar with animation
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.remove('w-0');
+                sidebar.classList.add('w-64');
+                sidebar.classList.add('translate-x-0');
+                mainContent.classList.add('ml-64');
+                mainContent.classList.remove('ml-0');
+            } else {
+                // Close sidebar with animation
+                sidebar.classList.remove('translate-x-0');
+                sidebar.classList.remove('w-64');
+                sidebar.classList.add('w-0');
+                sidebar.classList.add('-translate-x-full');
+                mainContent.classList.remove('ml-64');
+                mainContent.classList.add('ml-0');
+            }
+        });
+
+        // Initialize sidebar state based on screen size
+        function initializeSidebar() {
+            if (window.innerWidth < 768) {
+                sidebar.classList.add('-translate-x-full');
+                sidebar.classList.remove('translate-x-0');
+                sidebar.classList.remove('w-64');
+                sidebar.classList.add('w-0');
+                mainContent.classList.remove('ml-64');
+                mainContent.classList.add('ml-0');
+                sidebarOpen = false;
+            } else {
+                sidebar.classList.add('translate-x-0');
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.remove('w-0');
+                sidebar.classList.add('w-64');
+                mainContent.classList.add('ml-64');
+                mainContent.classList.remove('ml-0');
+                sidebarOpen = true;
+            }
+        }
+
+        // Run initialization
+        initializeSidebar();
+
+        // Also run when window is resized
+        window.addEventListener('resize', initializeSidebar);
+
+        // Close sidebar on mobile when clicking outside
+        if (window.innerWidth <= 768) {
+            document.addEventListener('click', (event) => {
+                if (!sidebarToggle.contains(event.target) && !sidebar.contains(event.target)) {
+                    sidebar.classList.add('-translate-x-full');
+                    sidebar.classList.remove('translate-x-0');
+                    sidebar.classList.remove('w-64');
+                    sidebar.classList.add('w-0');
+                    mainContent.classList.remove('ml-64');
+                    mainContent.classList.add('ml-0');
+                    sidebarOpen = false;
+                }
+            });
+        }
+    }
+});
 
 // Sample data for recent applications
 const recentApplications = [

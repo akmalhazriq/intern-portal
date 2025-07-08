@@ -60,6 +60,9 @@ if ($result && mysqli_num_rows($result) > 0) {
     echo "No results found.";
 }
 
+// Include security functions
+include('../../include/security.php');
+
 $error = '';
 $success = '';
 
@@ -71,14 +74,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!file_exists($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
-        $ext = pathinfo($_FILES['resume']['name'], PATHINFO_EXTENSION);
-        $safeName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $_SESSION['full_name']);
-        $newFileName = $safeName . '_' . date('YmdHis') . '.' . $ext;
-        $targetFile = $uploadDir . $newFileName;
-        if (move_uploaded_file($_FILES['resume']['tmp_name'], $targetFile)) {
-            $resume_url = $newFileName;
+        
+        // Validate file upload with security checks
+        $validation = validate_file_upload($_FILES['resume'], ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'], 10 * 1024 * 1024); // 10MB max
+        if ($validation !== true) {
+            $error = 'Upload error: ' . $validation;
         } else {
-            $error = 'Failed to upload resume.';
+            $ext = strtolower(pathinfo($_FILES['resume']['name'], PATHINFO_EXTENSION));
+            $safeName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $_SESSION['full_name']);
+            $newFileName = $safeName . '_' . date('YmdHis') . '.' . $ext;
+            $targetFile = $uploadDir . $newFileName;
+            if (move_uploaded_file($_FILES['resume']['tmp_name'], $targetFile)) {
+                $resume_url = $newFileName;
+            } else {
+                $error = 'Failed to upload resume.';
+            }
         }
     } else {
         $error = 'Please upload your resume.';

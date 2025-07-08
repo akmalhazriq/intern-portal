@@ -12,10 +12,17 @@ $level = 3;
 
 // Include database connection settings
 include('../../include/dbconn.php');
+include('../../include/security.php');
+
+// Set security headers
+set_security_headers();
 
 // Get company information
-$company_query = "SELECT * FROM company WHERE company_id = $company_id";
-$company_result = mysqli_query($dbconn, $company_query);
+$company_query = "SELECT * FROM company WHERE company_id = ?";
+$stmt = mysqli_prepare($dbconn, $company_query);
+mysqli_stmt_bind_param($stmt, "i", $company_id);
+mysqli_stmt_execute($stmt);
+$company_result = mysqli_stmt_get_result($stmt);
 
 if (!$company_result || mysqli_num_rows($company_result) == 0) {
     header('Location: /login');
@@ -65,10 +72,12 @@ if (isset($_GET['error'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create New Internship - FSKM Internship Portal</title>
     <link rel="stylesheet" href="../../global.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com" 
+            integrity="sha384-..." 
+            crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -303,6 +312,36 @@ if (isset($_GET['error'])) {
                                                id="elaun" 
                                                class="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent bg-[var(--background)] text-[var(--foreground)]"
                                                placeholder="e.g., 800">
+                                    </div>
+
+                                    <!-- Semester -->
+                                    <div>
+                                        <label for="semester_id" class="block text-sm font-medium text-[var(--foreground)] mb-2">
+                                            Semester <span class="text-red-500">*</span>
+                                        </label>
+                                        <select name="semester_id" 
+                                                id="semester_id"
+                                                required
+                                                class="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent bg-[var(--background)] text-[var(--foreground)]">
+                                            <option value="">Select a semester</option>
+                                            <?php
+                                                $semester_query = "SELECT * FROM semester WHERE is_active = 1 ORDER BY start_date DESC";
+                                                $semester_result = mysqli_query($dbconn, $semester_query);
+                                                if ($semester_result && mysqli_num_rows($semester_result) > 0) {
+                                                    while ($semester_row = mysqli_fetch_assoc($semester_result)) {
+                                                        $semester_id = (int)$semester_row['semester_id'];
+                                                        $semester_name = htmlspecialchars($semester_row['semester_name'], ENT_QUOTES, 'UTF-8');
+                                                        $start_date = htmlspecialchars(date('M Y', strtotime($semester_row['start_date'])), ENT_QUOTES, 'UTF-8');
+                                                        $end_date = htmlspecialchars(date('M Y', strtotime($semester_row['end_date'])), ENT_QUOTES, 'UTF-8');
+                                                        echo '<option value="' . $semester_id . '">' . 
+                                                             $semester_name . 
+                                                             ' (' . $start_date . ' - ' . $end_date . ')</option>';
+                                                    }
+                                                } else {
+                                                    echo '<option value="" disabled>No active semesters available</option>';
+                                                }
+                                            ?>
+                                        </select>
                                     </div>
 
                                     <!-- Status -->

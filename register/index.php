@@ -88,6 +88,17 @@
                     <div>
                         <label class="text-sm font-medium mb-2 block">Email</label>
                         <input type="email" name="email" required class="w-full text-sm border shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)]" placeholder="Email">
+                        <?php if (isset($_GET['error'])): ?>
+                            <?php if ($_GET['error'] == "company_exists"): ?>
+                                <p class="text-red-500 text-sm pt-2">Company with this username or email already exists.</p>
+                            <?php elseif ($_GET['error'] == "missing_fields"): ?>
+                                <p class="text-red-500 text-sm pt-2">Please fill in all required fields.</p>
+                            <?php elseif ($_GET['error'] == "invalid_email"): ?>
+                                <p class="text-red-500 text-sm pt-2">Please enter a valid email address.</p>
+                            <?php elseif ($_GET['error'] == "registration_failed"): ?>
+                                <p class="text-red-500 text-sm pt-2">Registration failed. Please try again.</p>
+                            <?php endif; ?>
+                        <?php endif; ?>
                     </div>
                     <div>
                         <label class="text-sm font-medium mb-2 block">Area</label>
@@ -121,12 +132,36 @@
 </main>
 <script>
     function showTab(tab) {
-        document.getElementById('studentForm').classList.toggle('hidden', tab !== 'student');
-        document.getElementById('companyForm').classList.toggle('hidden', tab !== 'company');
-        document.getElementById('studentTabBtn').classList.toggle('border-[var(--primary)]', tab === 'student');
-        document.getElementById('studentTabBtn').classList.toggle('text-[var(--muted)]', tab !== 'student');
-        document.getElementById('companyTabBtn').classList.toggle('border-[var(--primary)]', tab === 'company');
-        document.getElementById('companyTabBtn').classList.toggle('text-[var(--muted)]', tab !== 'company');
+        const studentForm = document.getElementById('studentForm');
+        const companyForm = document.getElementById('companyForm');
+        const studentTabBtn = document.getElementById('studentTabBtn');
+        const companyTabBtn = document.getElementById('companyTabBtn');
+        
+        if (tab === 'student') {
+            // Show student form, hide company form
+            studentForm.classList.remove('hidden');
+            companyForm.classList.add('hidden');
+            
+            // Style student tab as active
+            studentTabBtn.classList.add('border-[var(--primary)]');
+            studentTabBtn.classList.remove('border-transparent', 'text-[var(--muted)]');
+            
+            // Style company tab as inactive
+            companyTabBtn.classList.remove('border-[var(--primary)]');
+            companyTabBtn.classList.add('border-transparent', 'text-[var(--muted)]');
+        } else if (tab === 'company') {
+            // Show company form, hide student form
+            companyForm.classList.remove('hidden');
+            studentForm.classList.add('hidden');
+            
+            // Style company tab as active
+            companyTabBtn.classList.add('border-[var(--primary)]');
+            companyTabBtn.classList.remove('border-transparent', 'text-[var(--muted)]');
+            
+            // Style student tab as inactive
+            studentTabBtn.classList.remove('border-[var(--primary)]');
+            studentTabBtn.classList.add('border-transparent', 'text-[var(--muted)]');
+        }
     }
 </script>
 </body>

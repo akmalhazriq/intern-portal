@@ -126,6 +126,13 @@
                                     </a>
                                 </li>
                                 <li>
+                                    <a href="/dashboard/manage/semester"
+                                        class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium">
+                                        <i class="fa-solid fa-calendar-alt"></i>
+                                        <span>Manage Semesters</span>
+                                    </a>
+                                </li>
+                                <li>
                                     <a href="/dashboard/settings"
                                         class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium">
                                         <i class="fas fa-cog"></i>
@@ -409,8 +416,9 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             <?php
-                                $query = "SELECT v.*, c.* FROM vacancy as v
+                                $query = "SELECT v.*, c.*, s.semester_name FROM vacancy as v
                                     JOIN company as c ON v.company_id = c.company_id
+                                    LEFT JOIN semester as s ON v.semester_id = s.semester_id
                                     WHERE c.company_id = $company_id";
                                 $result = mysqli_query($dbconn, $query);
                                 if ($result && mysqli_num_rows($result) > 0) {
@@ -424,6 +432,7 @@
                                         $created_at = date('F j, Y', strtotime($row['created_at']));
                                         $description = $row['description'];
                                         $vacancy_status_id = $row['vacancy_status_id'];
+                                        $semester_name = isset($row['semester_name']) ? $row['semester_name'] : 'No semester assigned';
                                         $status_class = $vacancy_status_id == 1 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
                             ?>
                             <div class="group relative rounded-lg border border-[var(--border)] bg-[var(--background)] p-6 shadow-sm transition-all">
@@ -469,6 +478,10 @@
                                     <div class="gap-2 flex flex-col">
                                         <h3 class="text-lg font-semibold"><?php echo $title?></h3>
                                         <p class="text-wrap break-words line-clamp-3 text-[var(--muted)] text-sm"><?php echo $description ?></p>
+                                        <div class="flex items-center gap-2 text-xs text-[var(--muted)]">
+                                            <i class="fas fa-calendar-alt"></i>
+                                            <span><?php echo $semester_name; ?></span>
+                                        </div>
                                     </div>
                                     <div class="mt-auto gap-2 relative flex flex-col">
                                         <p class="text-sm text-[var(--muted)] bottom-0">
@@ -570,8 +583,9 @@
                                             <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 mx-6">
                                                 <?php
                                                     // Fetch internships from the database
-                                                    $query = "SELECT v.*, c.company_name, c.area, c.state FROM vacancy v 
+                                                    $query = "SELECT v.*, c.company_name, c.area, c.state, s.semester_name FROM vacancy v 
                                                                 JOIN company c ON v.company_id = c.company_id 
+                                                                LEFT JOIN semester s ON v.semester_id = s.semester_id
                                                                 WHERE v.vacancy_status_id = 1
                                                                 ORDER BY v.vacancy_id DESC";
                                                     $result = mysqli_query($dbconn, $query);
@@ -586,6 +600,7 @@
                                                             $created_at = date('F j, Y', strtotime($row['created_at']));
                                                             $description = $row['description'];
                                                             $vacancy_status_id = $row['vacancy_status_id'];
+                                                            $semester_name = isset($row['semester_name']) ? $row['semester_name'] : 'No semester assigned';
                                                             $status_class = $vacancy_status_id == 1 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
                                                 ?>
                                                             <div class="bg-[var(--background)] border border-[var(--border)] rounded-lg shadow-md p-4">
@@ -596,6 +611,9 @@
                                                                 <p class="text-sm text-[var(--muted)] mb-1">Location: <?php echo $location; ?></p>
                                                                 <p class="text-sm text-[var(--muted)] mb-1">Type: <?php echo $type; ?></p>
                                                                 <p class="text-sm text-[var(--muted)] mb-1">Salary: <?php echo $salary; ?></p>
+                                                                <p class="text-sm text-[var(--muted)] mb-1">
+                                                                    <i class="fas fa-calendar-alt mr-1"></i>Semester: <?php echo $semester_name; ?>
+                                                                </p>
                                                                 <p class="text-sm text-[var(--muted)] mb-2">Posted on: <?php echo $created_at; ?></p>
                                                                 <div class="<?php echo $status_class; ?> flex text-xs font-medium px-2 py-1 rounded mb-2">
                                                                     <?php echo $vacancy_status_id == 1 ? 'Open' : 'Closed'; ?>

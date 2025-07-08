@@ -1,35 +1,33 @@
 <?php
     session_start();
+    if (!isset($_SESSION['user_id'])) {
+        header('Location: /login');
+        exit;
+    }
+    $user_id = $_SESSION['user_id'];
+    $level = isset($_SESSION['level']) ? $_SESSION['level'] : null;
+    if ($level != 1) {
+        header('Location: /dashboard');
+        exit;
+    }
+
     // Include database connection settings
     include('../../../include/dbconn.php');
 
-    if (isset($_SESSION['user_id'])) {
-        $user_id = $_SESSION['user_id'];
-        $level = isset($_SESSION['level']) ? $_SESSION['level'] : null;
-        if ($level != 1) {
-            header('Location: /dashboard');
-            exit;
-        }
-        $query = "SELECT * FROM user WHERE user_id = $user_id";
-        $result = mysqli_query($dbconn, $query);
-        if ($result) {
-            $user = mysqli_fetch_assoc($result);
-            $full_name = $user['full_name'];
-            $email = $user['email'];
-            $area = $user['area'];
-            $state = $user['state'];
-            $phone_number = $user['phone_number'];
-            $campus = $user['campus'];
-            $course = $user['course'];
-            $profile_picture = $user['profile_picture'];
-        }
-    } elseif (isset($_SESSION['company_id'])) {
-        // Company should not access admin company management, redirect
-        header('Location: /dashboard');
-        exit;
-    } else {
-        header('Location: /login');
-        exit;
+    // Fetch user data from the database
+    $query = "SELECT * FROM user WHERE user_id = $user_id";
+    $result = mysqli_query($dbconn, $query);
+
+    if ($result) {
+        $user = mysqli_fetch_assoc($result);
+        $full_name = $user['full_name'];
+        $email = $user['email'];
+        $area = $user['area'];
+        $state = $user['state'];
+        $phone_number = $user['phone_number'];
+        $campus = $user['campus'];
+        $course = $user['course'];
+        $profile_picture = $user['profile_picture'];
     }
 ?>
 
@@ -49,11 +47,36 @@
     <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <style>
+        /* Modal backdrop blur effect */
+        #companyModal {
+            backdrop-filter: blur(4px);
+            margin-top: 0 !important;
+        }
+        
+        /* Scrollbar styling for modal content */
+        #companyModal .overflow-y-auto::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        #companyModal .overflow-y-auto::-webkit-scrollbar-track {
+            background: var(--secondary);
+        }
+        
+        #companyModal .overflow-y-auto::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+        
+        #companyModal .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+            background: var(--muted);
+        }
+    </style>
 </head>
 
 <body>
     <div class="min-h-[100dvh] flex w-full bg-[var(--secondary)] text-[var(--foreground)]">
-        <div class="fixed flex h-screen w-0 flex-col bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] transform transition-all duration-300 ease-in-out overflow-hidden z-20" id="sidebar">
+        <div class="fixed flex h-screen w-64 flex-col bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] transform transition-all duration-300 ease-in-out overflow-hidden z-20" id="sidebar">
             <div class="p-4">
                 <div class="flex items-center gap-2">
                     <i class="fas fa-briefcase h-6 w-6 text-[var(--primary)] text-xl"></i>
@@ -114,6 +137,13 @@
                                         class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium">
                                         <i class="fa-solid fa-briefcase"></i>
                                         <span>Manage Vacancy</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/dashboard/manage/semester"
+                                        class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium">
+                                        <i class="fa-solid fa-calendar-alt"></i>
+                                        <span>Manage Semesters</span>
                                     </a>
                                 </li>
                                 <li>
@@ -299,7 +329,7 @@
             </div>
         </div>
 
-        <div class="flex-1 ml-0 flex flex-col transition-all duration-300 ease-in-out" id="main-content">
+        <div class="flex-1 ml-64 flex flex-col transition-all duration-300 ease-in-out" id="main-content">
             <header class="bg-[var(--background)] border-b border-[var(--border)] sticky top-0 z-10">
                 <div class="flex items-center justify-between px-5 py-2">
                     <div class="flex items-center">
@@ -379,14 +409,36 @@
                             <button type="submit" class="px-4 py-2 bg-[var(--primary)] text-white rounded-md">Search</button>
                         </form>
                         <?php
-                            $search = isset($_GET['search']) ? mysqli_real_escape_string($dbconn, $_GET['search']) : '';
-                            $company_sql = "SELECT c.*, u.email, u.full_name, u.level_id FROM company c JOIN user u ON c.user_id = u.user_id";
-                            if ($search) {
-                                $company_sql .= " WHERE c.company_name LIKE '%$search%'";
+                            $search = '';
+                            if (isset($_GET['search'])) {
+                                $search = mysqli_real_escape_string($dbconn, $_GET['search']);
                             }
-                            $company_sql .= " ORDER BY c.company_name ASC";
+                            
+                            // Query only the company table since there's no user_id column
+                            $company_sql = "SELECT * FROM company";
+                            if ($search) {
+                                $company_sql .= " WHERE company_name LIKE '%$search%'";
+                            }
+                            $company_sql .= " ORDER BY company_name ASC";
                             $company_result = mysqli_query($dbconn, $company_sql);
                         ?>
+
+                        <!-- Company Details Modal -->
+                        <div id="companyModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+                            <div class="flex items-center justify-center min-h-screen p-4">
+                                <div class="bg-[var(--background)] rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                                    <div class="p-6">
+                                        <div class="flex justify-between items-center mb-4">
+                                            <h2 class="text-2xl font-bold">Company Details</h2>
+                                            <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                                                <i class="fas fa-times text-xl"></i>
+                                            </button>
+                                        </div>
+                                        <div id="companyDetails"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4">
                             <table class="w-full text-sm">
                                 <thead>
@@ -400,8 +452,8 @@
                                 <tbody>
                                     <?php while ($row = mysqli_fetch_assoc($company_result)): ?>
                                         <tr class="border-b border-[var(--border)] hover:bg-[var(--secondary)]">
-                                            <td class="py-2"><?php echo $row['company_name']; ?></td>
-                                            <td class="py-2"><?php echo $row['email']; ?></td>
+                                            <td class="py-2"><?php echo htmlspecialchars($row['company_name'] ?? 'N/A'); ?></td>
+                                            <td class="py-2"><?php echo htmlspecialchars($row['email'] ?? 'N/A'); ?></td>
                                             <td class="py-2">
                                                 <?php if (isset($row['verified']) && $row['verified']): ?>
                                                     <span class="text-green-600 font-semibold">Verified</span>
@@ -409,20 +461,12 @@
                                                     <span class="text-yellow-600 font-semibold">Unverified</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td class="py-2 flex gap-2">
-                                                <?php if (empty($row['verified'])): ?>
-                                                    <form method="POST" action="../../../process.php" class="inline">
-                                                        <input type="hidden" name="verify_company" value="1">
-                                                        <input type="hidden" name="company_id" value="<?php echo $row['company_id']; ?>">
-                                                        <button type="submit" class="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs">Verify</button>
-                                                    </form>
-                                                <?php else: ?>
-                                                    <form method="POST" action="../../../process.php" class="inline" onsubmit="return confirm('Are you sure you want to unverify this company?');">
-                                                        <input type="hidden" name="unverify_company" value="1">
-                                                        <input type="hidden" name="company_id" value="<?php echo $row['company_id']; ?>">
-                                                        <button type="submit" class="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-xs">Unverify</button>
-                                                    </form>
-                                                <?php endif; ?>
+                                            <td class="py-2">
+                                                <div class="flex gap-2">
+                                                    <button onclick="viewCompanyDetails(<?php echo $row['company_id']; ?>)" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs">
+                                                        <i class="fas fa-eye mr-1"></i>View Details
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endwhile; ?>
@@ -473,6 +517,152 @@
                     dropdown.classList.remove('hidden');
                     chevron.style.transform = 'rotate(180deg)';
                 }
+            }
+        });
+
+        // Company details modal functions
+        function viewCompanyDetails(companyId) {
+            fetch(`../../../api/get_company_details.php?company_id=${companyId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayCompanyDetails(data.company);
+                        document.getElementById('companyModal').classList.remove('hidden');
+                    } else {
+                        alert('Error loading company details: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error loading company details');
+                });
+        }
+
+        function displayCompanyDetails(company) {
+            const detailsContainer = document.getElementById('companyDetails');
+            const verifyButton = company.verified ? 
+                `<button onclick="updateVerificationStatus(${company.company_id}, 0)" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                    <i class="fas fa-times-circle mr-1"></i>Unverify Company
+                </button>` :
+                `<button onclick="updateVerificationStatus(${company.company_id}, 1)" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+                    <i class="fas fa-check-circle mr-1"></i>Verify Company
+                </button>`;
+
+            detailsContainer.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Company Information -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold border-b border-[var(--border)] pb-2">Company Information</h3>
+                        <div class="space-y-2">
+                            <div><strong>Company Name:</strong> ${company.company_name || 'N/A'}</div>
+                            <div><strong>Username:</strong> ${company.username || 'N/A'}</div>
+                            <div><strong>Email:</strong> ${company.email || 'N/A'}</div>
+                            <div><strong>Phone:</strong> ${company.phone || 'N/A'}</div>
+                            <div><strong>Area:</strong> ${company.area || 'N/A'}</div>
+                            <div><strong>State:</strong> ${company.state || 'N/A'}</div>
+                            <div><strong>Website:</strong> ${company.website ? `<a href="${company.website}" target="_blank" class="text-blue-500 hover:underline">${company.website}</a>` : 'N/A'}</div>
+                        </div>
+                    </div>
+
+                    <!-- Status and Images -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold border-b border-[var(--border)] pb-2">Status & Media</h3>
+                        <div class="space-y-2">
+                            <div><strong>Verification Status:</strong> 
+                                <span class="${company.verified ? 'text-green-600' : 'text-yellow-600'} font-semibold">
+                                    ${company.verified ? 'Verified' : 'Unverified'}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        ${company.logo ? `
+                            <div>
+                                <strong>Company Logo:</strong><br>
+                                <img src="../../../src/company_logo/${company.logo}" alt="Company Logo" class="mt-2 max-w-32 h-auto border border-[var(--border)] rounded">
+                            </div>
+                        ` : ''}
+                        
+                        ${company.banner ? `
+                            <div>
+                                <strong>Company Banner:</strong><br>
+                                <img src="../../../src/company_banner/${company.banner}" alt="Company Banner" class="mt-2 max-w-64 h-auto border border-[var(--border)] rounded">
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+
+                <!-- Description -->
+                ${company.description ? `
+                    <div class="mt-6">
+                        <h3 class="text-lg font-semibold border-b border-[var(--border)] pb-2">Company Description</h3>
+                        <p class="mt-2 text-[var(--muted)]">${company.description}</p>
+                    </div>
+                ` : ''}
+
+                <!-- Action Buttons -->
+                <div class="mt-6 flex gap-3 pt-4 border-t border-[var(--border)]">
+                    ${verifyButton}
+                    <button onclick="closeModal()" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+                        <i class="fas fa-times mr-1"></i>Close
+                    </button>
+                </div>
+            `;
+        }
+
+        function updateVerificationStatus(companyId, verified) {
+            const action = verified ? 'verify' : 'unverify';
+            const confirmMessage = verified ? 
+                'Are you sure you want to verify this company?' : 
+                'Are you sure you want to unverify this company?';
+            
+            if (confirm(confirmMessage)) {
+                const formData = new FormData();
+                formData.append(verified ? 'verify_company' : 'unverify_company', '1');
+                formData.append('company_id', companyId);
+
+                fetch('../../../process.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                    // Close modal and reload page to reflect changes
+                    closeModal();
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert(`Error ${action}ing company`);
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('companyModal').classList.add('hidden');
+        }
+
+        // Sidebar toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            
+            if (sidebarToggle && sidebar && mainContent) {
+                sidebarToggle.addEventListener('click', function() {
+                    if (sidebar.classList.contains('w-64')) {
+                        // Hide sidebar
+                        sidebar.classList.remove('w-64');
+                        sidebar.classList.add('w-0');
+                        mainContent.classList.remove('ml-64');
+                        mainContent.classList.add('ml-0');
+                    } else {
+                        // Show sidebar
+                        sidebar.classList.remove('w-0');
+                        sidebar.classList.add('w-64');
+                        mainContent.classList.remove('ml-0');
+                        mainContent.classList.add('ml-64');
+                    }
+                });
             }
         });
     </script>

@@ -129,6 +129,13 @@
                                     </a>
                                 </li>
                                 <li>
+                                    <a href="/dashboard/manage/semester"
+                                        class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium">
+                                        <i class="fa-solid fa-calendar-alt"></i>
+                                        <span>Manage Semesters</span>
+                                    </a>
+                                </li>
+                                <li>
                                     <a href="/dashboard/settings"
                                         class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-[var(--primary)]">
                                         <i class="fas fa-cog"></i>

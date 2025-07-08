@@ -41,7 +41,8 @@ $banner = $company['banner'];
 $logo = $company['logo'];
 
 // Fetch vacancy details and verify ownership
-$query = "SELECT v.* FROM vacancy v 
+$query = "SELECT v.*, s.semester_name FROM vacancy v 
+    LEFT JOIN semester s ON v.semester_id = s.semester_id
     WHERE v.vacancy_id = '$id' AND v.company_id = '$company_id'";
 $result = mysqli_query($dbconn, $query);
 
@@ -52,6 +53,8 @@ if ($result && mysqli_num_rows($result) > 0) {
     $elaun = $vacancy['elaun'];
     $description = $vacancy['description'];
     $vacancy_status_id = $vacancy['vacancy_status_id'];
+    $current_semester_id = $vacancy['semester_id'];
+    $current_semester_name = $vacancy['semester_name'];
 } else {
     // Vacancy not found or company doesn't own it
     header('Location: /dashboard/internships');
@@ -253,6 +256,39 @@ $full_name = $company_name;
                                             Monthly Allowance (RM)
                                         </label>
                                         <input type="text" name="elaun" id="elaun" value="<?php echo $elaun; ?>" class="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent bg-[var(--background)] text-[var(--foreground)]" placeholder="e.g., 800">
+                                    </div>
+
+                                    <!-- Semester -->
+                                    <div>
+                                        <label for="semester_id" class="block text-sm font-medium text-[var(--foreground)] mb-2">
+                                            Semester <span class="text-red-500">*</span>
+                                        </label>
+                                        <select name="semester_id" 
+                                                id="semester_id"
+                                                required
+                                                class="w-full px-3 py-2 border border-[var(--border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent bg-[var(--background)] text-[var(--foreground)]">
+                                            <option value="">Select a semester</option>
+                                            <?php
+                                                $semester_query = "SELECT * FROM semester WHERE is_active = 1 ORDER BY start_date DESC";
+                                                $semester_result = mysqli_query($dbconn, $semester_query);
+                                                if ($semester_result && mysqli_num_rows($semester_result) > 0) {
+                                                    while ($semester_row = mysqli_fetch_assoc($semester_result)) {
+                                                        $selected = ($current_semester_id == $semester_row['semester_id']) ? 'selected' : '';
+                                                        echo '<option value="' . $semester_row['semester_id'] . '" ' . $selected . '>' . 
+                                                             htmlspecialchars($semester_row['semester_name']) . 
+                                                             ' (' . date('M Y', strtotime($semester_row['start_date'])) . ' - ' . 
+                                                             date('M Y', strtotime($semester_row['end_date'])) . ')</option>';
+                                                    }
+                                                } else {
+                                                    echo '<option value="" disabled>No active semesters available</option>';
+                                                }
+                                            ?>
+                                        </select>
+                                        <?php if ($current_semester_name): ?>
+                                            <p class="text-xs text-[var(--muted)] mt-1">
+                                                Current: <?php echo htmlspecialchars($current_semester_name); ?>
+                                            </p>
+                                        <?php endif; ?>
                                     </div>
 
                                     <!-- Status -->

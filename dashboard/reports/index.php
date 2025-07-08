@@ -37,6 +37,32 @@
     $report_date = date('F j, Y');
     $report_time = date('g:i A');
 
+    // Get selected semester from GET parameter, default to all semesters
+    $selected_semester_id = isset($_GET['semester']) ? (int)$_GET['semester'] : 0;
+    
+    // Fetch all semesters for the dropdown
+    $semesters_query = "SELECT * FROM semester ORDER BY start_date DESC";
+    $semesters_result = mysqli_query($dbconn, $semesters_query);
+
+    // Build semester filter condition
+    $semester_filter = "";
+    $semester_join = "";
+    if ($selected_semester_id > 0) {
+        $semester_filter = " AND v.semester_id = $selected_semester_id";
+        $semester_join = " LEFT JOIN vacancy v ON a.vacancy_id = v.vacancy_id";
+    }
+
+    // Get selected semester name for report header
+    $selected_semester_name = "All Semesters";
+    if ($selected_semester_id > 0) {
+        $semester_name_query = "SELECT semester_name FROM semester WHERE semester_id = $selected_semester_id";
+        $semester_name_result = mysqli_query($dbconn, $semester_name_query);
+        if ($semester_name_result && mysqli_num_rows($semester_name_result) > 0) {
+            $semester_row = mysqli_fetch_assoc($semester_name_result);
+            $selected_semester_name = $semester_row['semester_name'];
+        }
+    }
+
     // Fetch statistics
     // Total counts
     $total_users_query = "SELECT COUNT(*) as total FROM user";
@@ -55,15 +81,27 @@
     $verified_companies_result = mysqli_query($dbconn, $verified_companies_query);
     $verified_companies = mysqli_fetch_assoc($verified_companies_result)['total'];
 
-    $total_vacancies_query = "SELECT COUNT(*) as total FROM vacancy";
+    // Semester-filtered vacancy counts
+    if ($selected_semester_id > 0) {
+        $total_vacancies_query = "SELECT COUNT(*) as total FROM vacancy WHERE semester_id = $selected_semester_id";
+        $active_vacancies_query = "SELECT COUNT(*) as total FROM vacancy WHERE vacancy_status_id = 1 AND semester_id = $selected_semester_id";
+    } else {
+        $total_vacancies_query = "SELECT COUNT(*) as total FROM vacancy";
+        $active_vacancies_query = "SELECT COUNT(*) as total FROM vacancy WHERE vacancy_status_id = 1";
+    }
     $total_vacancies_result = mysqli_query($dbconn, $total_vacancies_query);
     $total_vacancies = mysqli_fetch_assoc($total_vacancies_result)['total'];
-
-    $active_vacancies_query = "SELECT COUNT(*) as total FROM vacancy WHERE vacancy_status_id = 1";
     $active_vacancies_result = mysqli_query($dbconn, $active_vacancies_query);
     $active_vacancies = mysqli_fetch_assoc($active_vacancies_result)['total'];
 
-    $total_applications_query = "SELECT COUNT(*) as total FROM applicant";
+    // Semester-filtered application counts
+    if ($selected_semester_id > 0) {
+        $total_applications_query = "SELECT COUNT(*) as total FROM applicant a 
+                                    LEFT JOIN vacancy v ON a.vacancy_id = v.vacancy_id 
+                                    WHERE v.semester_id = $selected_semester_id";
+    } else {
+        $total_applications_query = "SELECT COUNT(*) as total FROM applicant";
+    }
     $total_applications_result = mysqli_query($dbconn, $total_applications_query);
     $total_applications = mysqli_fetch_assoc($total_applications_result)['total'];
 
@@ -71,41 +109,84 @@
     $total_announcements_result = mysqli_query($dbconn, $total_announcements_query);
     $total_announcements = mysqli_fetch_assoc($total_announcements_result)['total'];
 
-    // Application status breakdown
-    $application_status_query = "SELECT ast.status_name, COUNT(a.user_id) as count 
-                                FROM application_status ast 
-                                LEFT JOIN applicant a ON ast.application_status_id = a.application_status_id 
-                                GROUP BY ast.application_status_id, ast.status_name";
+    // Application status breakdown (semester-filtered)
+    if ($selected_semester_id > 0) {
+        $application_status_query = "SELECT ast.status_name, COUNT(a.user_id) as count 
+                                    FROM application_status ast 
+                                    LEFT JOIN applicant a ON ast.application_status_id = a.application_status_id 
+                                    LEFT JOIN vacancy v ON a.vacancy_id = v.vacancy_id
+                                    WHERE v.semester_id = $selected_semester_id OR a.user_id IS NULL
+                                    GROUP BY ast.application_status_id, ast.status_name";
+    } else {
+        $application_status_query = "SELECT ast.status_name, COUNT(a.user_id) as count 
+                                    FROM application_status ast 
+                                    LEFT JOIN applicant a ON ast.application_status_id = a.application_status_id 
+                                    GROUP BY ast.application_status_id, ast.status_name";
+    }
     $application_status_result = mysqli_query($dbconn, $application_status_query);
 
-    // Recent activities
-    $recent_applications_query = "SELECT u.full_name, v.title, c.company_name, a.applied_at 
-                                FROM applicant a 
-                                JOIN user u ON a.user_id = u.user_id 
-                                JOIN vacancy v ON a.vacancy_id = v.vacancy_id 
-                                JOIN company c ON v.company_id = c.company_id 
-                                ORDER BY a.applied_at DESC LIMIT 10";
+    // Recent activities (semester-filtered)
+    if ($selected_semester_id > 0) {
+        $recent_applications_query = "SELECT u.full_name, v.title, c.company_name, a.applied_at 
+                                    FROM applicant a 
+                                    JOIN user u ON a.user_id = u.user_id 
+                                    JOIN vacancy v ON a.vacancy_id = v.vacancy_id 
+                                    JOIN company c ON v.company_id = c.company_id 
+                                    WHERE v.semester_id = $selected_semester_id
+                                    ORDER BY a.applied_at DESC LIMIT 10";
+    } else {
+        $recent_applications_query = "SELECT u.full_name, v.title, c.company_name, a.applied_at 
+                                    FROM applicant a 
+                                    JOIN user u ON a.user_id = u.user_id 
+                                    JOIN vacancy v ON a.vacancy_id = v.vacancy_id 
+                                    JOIN company c ON v.company_id = c.company_id 
+                                    ORDER BY a.applied_at DESC LIMIT 10";
+    }
     $recent_applications_result = mysqli_query($dbconn, $recent_applications_query);
 
-    // Company statistics
-    $companies_with_vacancies_query = "SELECT c.company_name, COUNT(v.vacancy_id) as vacancy_count, 
-                                        COUNT(a.user_id) as application_count 
-                                        FROM company c 
-                                        LEFT JOIN vacancy v ON c.company_id = v.company_id 
-                                        LEFT JOIN applicant a ON v.vacancy_id = a.vacancy_id 
-                                        WHERE c.verified = 1
-                                        GROUP BY c.company_id, c.company_name 
-                                        ORDER BY vacancy_count DESC LIMIT 10";
+    // Company statistics (semester-filtered)
+    if ($selected_semester_id > 0) {
+        $companies_with_vacancies_query = "SELECT c.company_name, COUNT(v.vacancy_id) as vacancy_count, 
+                                            COUNT(a.user_id) as application_count 
+                                            FROM company c 
+                                            LEFT JOIN vacancy v ON c.company_id = v.company_id AND v.semester_id = $selected_semester_id
+                                            LEFT JOIN applicant a ON v.vacancy_id = a.vacancy_id 
+                                            WHERE c.verified = 1
+                                            GROUP BY c.company_id, c.company_name 
+                                            HAVING vacancy_count > 0
+                                            ORDER BY vacancy_count DESC LIMIT 10";
+    } else {
+        $companies_with_vacancies_query = "SELECT c.company_name, COUNT(v.vacancy_id) as vacancy_count, 
+                                            COUNT(a.user_id) as application_count 
+                                            FROM company c 
+                                            LEFT JOIN vacancy v ON c.company_id = v.company_id 
+                                            LEFT JOIN applicant a ON v.vacancy_id = a.vacancy_id 
+                                            WHERE c.verified = 1
+                                            GROUP BY c.company_id, c.company_name 
+                                            ORDER BY vacancy_count DESC LIMIT 10";
+    }
     $companies_with_vacancies_result = mysqli_query($dbconn, $companies_with_vacancies_query);
 
-    // Monthly application trends (last 12 months)
-    $monthly_applications_query = "SELECT 
-                                    DATE_FORMAT(applied_at, '%Y-%m') as month,
-                                    COUNT(*) as applications
-                                    FROM applicant 
-                                    WHERE applied_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
-                                    GROUP BY DATE_FORMAT(applied_at, '%Y-%m')
-                                    ORDER BY month DESC";
+    // Monthly application trends (last 12 months, semester-filtered)
+    if ($selected_semester_id > 0) {
+        $monthly_applications_query = "SELECT 
+                                        DATE_FORMAT(a.applied_at, '%Y-%m') as month,
+                                        COUNT(*) as applications
+                                        FROM applicant a
+                                        JOIN vacancy v ON a.vacancy_id = v.vacancy_id
+                                        WHERE a.applied_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                                        AND v.semester_id = $selected_semester_id
+                                        GROUP BY DATE_FORMAT(a.applied_at, '%Y-%m')
+                                        ORDER BY month DESC";
+    } else {
+        $monthly_applications_query = "SELECT 
+                                        DATE_FORMAT(applied_at, '%Y-%m') as month,
+                                        COUNT(*) as applications
+                                        FROM applicant 
+                                        WHERE applied_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                                        GROUP BY DATE_FORMAT(applied_at, '%Y-%m')
+                                        ORDER BY month DESC";
+    }
     $monthly_applications_result = mysqli_query($dbconn, $monthly_applications_query);
 ?>
 
@@ -142,6 +223,9 @@
                 margin: 0 !important;
                 padding: 20px !important;
             }
+            #main-content {
+                margin-left: 0 !important;
+            }
         }
         .print-only {
             display: none;
@@ -152,7 +236,7 @@
 <body>
     <div class="min-h-[100dvh] flex w-full bg-[var(--secondary)] text-[var(--foreground)]">
         <!-- Sidebar -->
-        <div class="fixed flex h-screen w-0 flex-col bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] transform transition-all duration-300 ease-in-out overflow-hidden z-20" id="sidebar">
+        <div class="fixed flex h-screen w-0 flex-col bg-[var(--background)] text-[var(--foreground)] border-r border-[var(--border)] transform transition-all duration-300 ease-in-out overflow-hidden z-20 no-print" id="sidebar">
             <div class="p-4">
                 <div class="flex items-center gap-2">
                     <i class="fas fa-briefcase h-6 w-6 text-[var(--primary)] text-xl"></i>
@@ -214,6 +298,13 @@
                                         class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium">
                                         <i class="fa-solid fa-briefcase"></i>
                                         <span>Manage Vacancy</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/dashboard/manage/semester"
+                                        class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium">
+                                        <i class="fa-solid fa-calendar-alt"></i>
+                                        <span>Manage Semesters</span>
                                     </a>
                                 </li>
                                 <li>
@@ -408,7 +499,7 @@
 
         <!-- Header -->
         <div class="flex-1 ml-0 flex flex-col transition-all duration-300 ease-in-out" id="main-content">
-            <header class="bg-[var(--background)] border-b border-[var(--border)] sticky top-0 z-10 no-print">
+            <header class="bg-[var(--background)] border-b border-[var(--border)] sticky top-0 z-10">
                 <div class="flex items-center justify-between px-5 py-2">
                     <div class="flex items-center">
                         <button type="button" id="sidebar-toggle">
@@ -417,30 +508,54 @@
                     </div>
 
                     <div class="flex items-center gap-3">
+                        <!-- Notification Dropdown -->
+                        <div class="relative">
+                            <!-- Notification Button -->
+                            <button type="button" class="relative p-2 rounded-md" id="notification-button">
+                            </button>
+                        </div>
+
                         <!-- User Profile Dropdown -->
                         <div class="relative">
+                            <!-- User Profile Button -->
                             <button type="button" class="relative p-2 rounded-md hover:bg-[var(--secondary)]" id="user-profile-button">
                                 <div class="h-8 w-8 rounded-full overflow-hidden">
                                     <?php
+                                        $query = "SELECT * FROM user WHERE user_id = $user_id";
+                                        $result = mysqli_query($dbconn, $query);
+                                        $user = mysqli_fetch_assoc($result);
+                                        $profile_picture = $user['profile_picture'];
+
                                         if ($profile_picture) {
                                             echo '<img src="../../src/profile_picture/' . $profile_picture . '" alt="User avatar" class="h-full w-full object-cover" />';
                                         } else {
-                                            echo '<img src="https://cdn-icons-png.flaticon.com/512/6024/6024190.png" alt="User avatar" class="h-full w-full object-cover" />';
+                                            if ($level == 1) {
+                                                echo '<img src="https://cdn-icons-png.flaticon.com/512/6024/6024190.png" alt="User avatar" class="h-full w-full object-cover" />';
+                                            } else if ($level == 2) {
+                                                echo '<img src="https://cdn-icons-png.flaticon.com/512/201/201818.png" alt="User avatar" class="h-full w-full object-cover" />';
+                                            } else if ($level == 3) {
+                                                echo '<img src="   https://cdn-icons-png.flaticon.com/512/3061/3061341.png " alt="User avatar" class="h-full w-full object-cover" />';
+                                            }
                                         }
                                     ?>
                                 </div>
                             </button>
 
+                            <!-- User Profile Dropdown Content -->
                             <div class="hidden absolute right-0 mt-2 w-48 bg-[var(--background)] rounded-md shadow-lg z-50 border border-[var(--border)]" id="user-profile-dropdown">
-                                <div class="p-2 border-b border-[var(--border)]">
+                                <div class="p-2 border-b border-b-[var(--border)]">
                                     <span class="font-medium">My Account</span>
                                 </div>
+
                                 <div class="py-1">
-                                    <a href="/dashboard/profile" class="block px-4 py-2 text-sm hover:bg-[var(--secondary)]">Profile</a>
-                                    <a href="/dashboard/settings" class="block px-4 py-2 text-sm hover:bg-[var(--secondary)]">Settings</a>
+                                    <a href="/dashboard/profile"
+                                        class="block px-4 py-2 text-sm hover:bg-[var(--secondary)]">Profile</a>
+                                    <a href="/dashboard/settings"
+                                        class="block px-4 py-2 text-sm hover:bg-[var(--secondary)]">Settings</a>
                                 </div>
-                                <div class="py-1 border-t border-[var(--border)]">
-                                    <a href="../../logout.php" class="block px-4 py-2 text-sm hover:bg-[var(--secondary)]">Logout</a>
+
+                                <div class="py-1 border-t border-t-[var(--border)]">
+                                    <a href="../../../logout.php" class="block px-4 py-2 text-sm hover:bg-[var(--secondary)]">Logout</a>
                                 </div>
                             </div>
                         </div>
@@ -450,12 +565,12 @@
 
             <!-- Report Content -->
             <div class="flex-1 p-4 md:p-6 lg:p-8 overflow-auto print-container">
-                <div class="max-w-7xl mx-auto space-y-6">
+                <div class="mx-auto space-y-6">
                     <!-- Header Section -->
                     <div class="flex flex-row items-center justify-between">
                         <div>
                             <h1 class="text-3xl font-bold tracking-tight">System Reports & Analytics</h1>
-                            <p class="text-[var(--muted)]">Comprehensive overview of the internship portal.</p>
+                            <p class="text-[var(--muted)]">Comprehensive overview of the internship portal<?php echo $selected_semester_id > 0 ? " for " . $selected_semester_name : ""; ?>.</p>
                         </div>
                         <div class="no-print">
                             <button onclick="window.print()" 
@@ -465,13 +580,55 @@
                         </div>
                     </div>
 
+                    <!-- Semester Filter -->
+                    <div class="bg-[var(--background)] border border-[var(--border)] rounded-lg p-4 no-print">
+                        <form method="GET" action="" class="flex items-center gap-4 flex-wrap">
+                            <label for="semester" class="text-sm font-medium text-[var(--foreground)]">
+                                <i class="fas fa-filter mr-2"></i>Filter by Semester:
+                            </label>
+                            <select name="semester" id="semester" 
+                                    class="px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                                    onchange="this.form.submit()">
+                                <option value="0" <?php echo $selected_semester_id == 0 ? 'selected' : ''; ?>>All Semesters</option>
+                                <?php 
+                                    mysqli_data_seek($semesters_result, 0); // Reset pointer
+                                    while ($semester = mysqli_fetch_assoc($semesters_result)): 
+                                ?>
+                                    <option value="<?php echo $semester['semester_id']; ?>" 
+                                            <?php echo $selected_semester_id == $semester['semester_id'] ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($semester['semester_name']); ?>
+                                    </option>
+                                <?php endwhile; ?>
+                            </select>
+                            <?php if ($selected_semester_id > 0): ?>
+                                <div class="flex items-center gap-2">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        <i class="fas fa-filter mr-1"></i>
+                                        Filtered: <?php echo htmlspecialchars($selected_semester_name); ?>
+                                    </span>
+                                    <a href="?" class="text-sm text-[var(--muted)] hover:text-[var(--primary)] underline">
+                                        Clear Filter
+                                    </a>
+                                </div>
+                            <?php endif; ?>
+                            <noscript>
+                                <button type="submit" class="px-4 py-2 bg-[var(--primary)] text-white rounded-md hover:bg-[var(--primary-hover)] transition">
+                                    Apply Filter
+                                </button>
+                            </noscript>
+                        </form>
+                    </div>
+
                     <!-- Print Header (only visible when printing) -->
                     <div class="print-only border-b-2 border-gray-300 pb-4 mb-6">
                         <div class="text-center">
                             <h1 class="text-2xl font-bold">FSKM Internship Portal</h1>
-                            <h2 class="text-xl font-semibold mt-2">System Report</h2>
+                            <h2 class="text-xl font-semibold mt-2">System Report<?php echo $selected_semester_id > 0 ? " - " . $selected_semester_name : ""; ?></h2>
                             <p class="text-gray-600 mt-2">Generated on <?php echo $report_date; ?> at <?php echo $report_time; ?></p>
                             <p class="text-gray-600">Generated by: <?php echo $full_name; ?> (Admin)</p>
+                            <?php if ($selected_semester_id > 0): ?>
+                                <p class="text-gray-600">Semester: <?php echo $selected_semester_name; ?></p>
+                            <?php endif; ?>
                         </div>
                     </div>
 
@@ -528,7 +685,9 @@
                                     </div>
                                 </div>
                                 <div class="ml-4">
-                                    <p class="text-sm font-medium text-[var(--muted)]">Vacancies</p>
+                                    <p class="text-sm font-medium text-[var(--muted)]">
+                                        Vacancies<?php echo $selected_semester_id > 0 ? " ($selected_semester_name)" : ""; ?>
+                                    </p>
                                     <p class="text-2xl font-semibold text-[var(--foreground)]"><?php echo $active_vacancies; ?>/<?php echo $total_vacancies; ?></p>
                                     <p class="text-xs text-[var(--muted)]">Active/Total</p>
                                 </div>
@@ -543,7 +702,9 @@
                                     </div>
                                 </div>
                                 <div class="ml-4">
-                                    <p class="text-sm font-medium text-[var(--muted)]">Applications</p>
+                                    <p class="text-sm font-medium text-[var(--muted)]">
+                                        Applications<?php echo $selected_semester_id > 0 ? " ($selected_semester_name)" : ""; ?>
+                                    </p>
                                     <p class="text-2xl font-semibold text-[var(--foreground)]"><?php echo $total_applications; ?></p>
                                 </div>
                             </div>

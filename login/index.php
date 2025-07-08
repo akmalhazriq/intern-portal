@@ -38,6 +38,20 @@
                     <div>
                         <label class="text-sm font-medium mb-2 block">Password</label>
                         <input type="password" name="password" required class="w-full text-sm border shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)]" placeholder="Password">
+                        <?php if (isset($_GET['error'])): ?>
+                            <?php if ($_GET['error'] == "1"): ?>
+                                <p class="text-red-500 text-sm pt-2">Invalid email or password.</p>
+                            <?php elseif ($_GET['error'] == "2"): ?>
+                                <p class="text-red-500 text-sm pt-2">Invalid email or password.</p>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                        <?php if (isset($_GET['register'])): ?>
+                            <?php if ($_GET['register'] == "1"): ?>
+                                <p class="text-green-500 text-sm pt-2">Registration successful! Please login.</p>
+                            <?php elseif ($_GET['register'] == "company_success"): ?>
+                                <p class="text-green-500 text-sm pt-2">Company registration submitted! Please wait for admin verification.</p>
+                            <?php endif; ?>
+                        <?php endif; ?>
                     </div>
                     <button type="submit" name="login" class="w-full shadow-xl py-2.5 px-4 text-[15px] font-medium tracking-wide rounded-lg text-[var(--background)] bg-[var(--primary)] hover:bg-[var(--primary-hover)] focus:outline-none">
                         Login&nbsp;&nbsp;<li class="fa-solid fa-arrow-right"></li>
@@ -56,6 +70,15 @@
                     <div>
                         <label class="text-sm font-medium mb-2 block">Password</label>
                         <input type="password" name="password" required class="w-full text-sm border shadow-[var(--muted)] pl-4 pr-10 py-3 rounded-lg outline-[var(--primary)]" placeholder="Password">
+                        <?php if (isset($_GET['error'])): ?>
+                            <?php if ($_GET['error'] == "1"): ?>
+                                <p class="text-red-500 text-sm pt-2">Invalid username or password.</p>
+                            <?php elseif ($_GET['error'] == "2"): ?>
+                                <p class="text-red-500 text-sm pt-2">Invalid username or password.</p>
+                            <?php elseif ($_GET['error'] == "not_verified"): ?>
+                                <p class="text-red-500 text-sm pt-2">Your company account is pending admin verification.</p>
+                            <?php endif; ?>
+                        <?php endif; ?>
                     </div>
                     <button type="submit" name="company_login" class="w-full shadow-xl py-2.5 px-4 text-[15px] font-medium tracking-wide rounded-lg text-[var(--background)] bg-[var(--primary)] hover:bg-[var(--primary-hover)] focus:outline-none">
                         Login as Company&nbsp;&nbsp;<li class="fa-solid fa-arrow-right"></li>
@@ -71,12 +94,36 @@
 </main>
 <script>
     function showTab(tab) {
-        document.getElementById('userForm').classList.toggle('hidden', tab !== 'user');
-        document.getElementById('companyForm').classList.toggle('hidden', tab !== 'company');
-        document.getElementById('userTabBtn').classList.toggle('border-[var(--primary)]', tab === 'user');
-        document.getElementById('userTabBtn').classList.toggle('text-[var(--muted)]', tab !== 'user');
-        document.getElementById('companyTabBtn').classList.toggle('border-[var(--primary)]', tab === 'company');
-        document.getElementById('companyTabBtn').classList.toggle('text-[var(--muted)]', tab !== 'company');
+        const userForm = document.getElementById('userForm');
+        const companyForm = document.getElementById('companyForm');
+        const userTabBtn = document.getElementById('userTabBtn');
+        const companyTabBtn = document.getElementById('companyTabBtn');
+        
+        if (tab === 'user') {
+            // Show user form, hide company form
+            userForm.classList.remove('hidden');
+            companyForm.classList.add('hidden');
+            
+            // Style user tab as active
+            userTabBtn.classList.add('border-[var(--primary)]');
+            userTabBtn.classList.remove('border-transparent', 'text-[var(--muted)]');
+            
+            // Style company tab as inactive
+            companyTabBtn.classList.remove('border-[var(--primary)]');
+            companyTabBtn.classList.add('border-transparent', 'text-[var(--muted)]');
+        } else if (tab === 'company') {
+            // Show company form, hide user form
+            companyForm.classList.remove('hidden');
+            userForm.classList.add('hidden');
+            
+            // Style company tab as active
+            companyTabBtn.classList.add('border-[var(--primary)]');
+            companyTabBtn.classList.remove('border-transparent', 'text-[var(--muted)]');
+            
+            // Style user tab as inactive
+            userTabBtn.classList.remove('border-[var(--primary)]');
+            userTabBtn.classList.add('border-transparent', 'text-[var(--muted)]');
+        }
     }
 </script>
 </body>

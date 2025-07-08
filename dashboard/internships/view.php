@@ -56,8 +56,9 @@
 
     $id = $_GET['id'];
 
-    $query = "SELECT v.*, v.description, c.company_name, c.phone, c.email, c.area, c.state, c.website, c.verified, c.banner, c.logo FROM vacancy v 
+    $query = "SELECT v.*, v.description, c.company_name, c.phone, c.email, c.area, c.state, c.website, c.verified, c.banner, c.logo, s.semester_name, s.start_date, s.end_date FROM vacancy v 
         JOIN company c ON v.company_id = c.company_id 
+        LEFT JOIN semester s ON v.semester_id = s.semester_id
         WHERE v.vacancy_id = '$id'";
     $result = mysqli_query($dbconn, $query);
 
@@ -79,6 +80,11 @@
         $created_at = date('F j, Y', strtotime($row['created_at']));
         $description = $row['description'];
         $vacancy_status_id = $row['vacancy_status_id'];
+        $semester_name = isset($row['semester_name']) ? $row['semester_name'] : 'No semester assigned';
+        $semester_period = '';
+        if (isset($row['start_date']) && isset($row['end_date'])) {
+            $semester_period = date('M Y', strtotime($row['start_date'])) . ' - ' . date('M Y', strtotime($row['end_date']));
+        }
     } else {
         echo "No results found.";
     }
@@ -159,7 +165,11 @@
                             <h1 class="text-3xl md:text-4xl font-bold mb-2"><?php echo $title; ?></h1>
                             <div class="flex flex-wrap gap-3 text-base text-[var(--muted)] mb-2">
                                 <span class="inline-flex items-center gap-1"><i class="fa-solid fa-user-tie"></i> <?php echo $role; ?></span>
-                                <span class="inline-flex items-center gap-1"><i class="fa-solid fa-calendar"></i> <?php echo $created_at; ?></span>
+                                <span class="inline-flex items-center gap-1"><i class="fa-solid fa-calendar-alt"></i> <?php echo $semester_name; ?></span>
+                                <?php if ($semester_period): ?>
+                                    <span class="inline-flex items-center gap-1"><i class="fa-solid fa-clock"></i> <?php echo $semester_period; ?></span>
+                                <?php endif; ?>
+                                <span class="inline-flex items-center gap-1"><i class="fa-solid fa-calendar"></i> Posted: <?php echo $created_at; ?></span>
                             </div>
                         </div>
                         <div class="flex flex-col items-end gap-3">

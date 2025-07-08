@@ -115,6 +115,13 @@
                                     </a>
                                 </li>
                                 <li>
+                                    <a href="/dashboard/manage/semester"
+                                        class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium">
+                                        <i class="fa-solid fa-calendar-alt"></i>
+                                        <span>Manage Semesters</span>
+                                    </a>
+                                </li>
+                                <li>
                                     <a href="/dashboard/settings"
                                         class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium">
                                         <i class="fas fa-cog"></i>
@@ -370,16 +377,62 @@
                         <div class="flex flex-row items-center justify-between">
                             <div>
                                 <h1 class="text-3xl font-bold tracking-tight">Manage Vacancies</h1>
-                                <p class="text-[var(--muted)]">View or remove internship vacancies.</p>
+                                <p class="text-[var(--muted)]">Manage internship vacancies. Delete vacancies with no applicants or change status for all vacancies.</p>
                             </div>
                         </div>
+                        
+                        <!-- Success/Error Messages -->
+                        <?php if (isset($_GET['success'])): ?>
+                            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                                <?php
+                                    switch($_GET['success']) {
+                                        case 'removed':
+                                            echo 'Vacancy deleted successfully.';
+                                            break;
+                                        case 'status_changed':
+                                            $status = isset($_GET['status']) ? $_GET['status'] : 'updated';
+                                            echo "Vacancy status $status successfully.";
+                                            break;
+                                        default:
+                                            echo 'Action completed successfully.';
+                                    }
+                                ?>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <?php if (isset($_GET['error'])): ?>
+                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                                <?php
+                                    switch($_GET['error']) {
+                                        case 'has_applicants':
+                                            echo 'Cannot delete vacancy: This vacancy has applicants. You can only change its status to Open/Closed.';
+                                            break;
+                                        case 'remove_failed':
+                                            echo 'Failed to delete vacancy. Please try again.';
+                                            break;
+                                        case 'status_change_failed':
+                                            echo 'Failed to change vacancy status. Please try again.';
+                                            break;
+                                        case 'invalid_status':
+                                            echo 'Invalid status provided.';
+                                            break;
+                                        default:
+                                            echo 'An error occurred. Please try again.';
+                                    }
+                                ?>
+                            </div>
+                        <?php endif; ?>
+                        
                         <form method="GET" class="mb-4 flex gap-2">
                             <input type="text" name="search" placeholder="Search by title..." value="<?php echo isset($_GET['search']) ? $_GET['search'] : ''; ?>" class="px-3 py-2 border border-[var(--border)] rounded-md w-64" />
                             <button type="submit" class="px-4 py-2 bg-[var(--primary)] text-white rounded-md">Search</button>
                         </form>
                         <?php
                             $search = isset($_GET['search']) ? mysqli_real_escape_string($dbconn, $_GET['search']) : '';
-                            $vacancy_sql = "SELECT v.*, c.company_name FROM vacancy v JOIN company c ON v.company_id = c.company_id";
+                            $vacancy_sql = "SELECT v.*, c.company_name, 
+                                            (SELECT COUNT(*) FROM applicant a WHERE a.vacancy_id = v.vacancy_id) as applicant_count 
+                                            FROM vacancy v 
+                                            JOIN company c ON v.company_id = c.company_id";
                             if ($search) {
                                 $vacancy_sql .= " WHERE v.title LIKE '%$search%'";
                             }
@@ -393,6 +446,7 @@
                                         <th class="py-2 text-left">Title</th>
                                         <th class="py-2 text-left">Company</th>
                                         <th class="py-2 text-left">Status</th>
+                                        <th class="py-2 text-left">Applicants</th>
                                         <th class="py-2 text-left">Actions</th>
                                     </tr>
                                 </thead>
@@ -408,12 +462,57 @@
                                                     else echo '<span class="text-gray-600">Unknown</span>';
                                                 ?>
                                             </td>
+                                            <td class="py-2">
+                                                <span class="<?php echo $row['applicant_count'] > 0 ? 'text-blue-600 font-semibold' : 'text-gray-500'; ?>">
+                                                    <?php echo $row['applicant_count']; ?>
+                                                </span>
+                                            </td>
                                             <td class="py-2 flex gap-2">
-                                                <form method="POST" action="../../../process.php" class="inline" onsubmit="return confirm('Are you sure you want to remove this vacancy?');">
-                                                    <input type="hidden" name="remove_vacancy" value="1">
-                                                    <input type="hidden" name="vacancy_id" value="<?php echo $row['vacancy_id']; ?>">
-                                                    <button type="submit" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs">Remove</button>
-                                                </form>
+                                                <?php if ($row['applicant_count'] > 0): ?>
+                                                    <!-- If vacancy has applicants, only allow status change -->
+                                                    <form method="POST" action="../../../process.php" class="inline">
+                                                        <input type="hidden" name="change_vacancy_status" value="1">
+                                                        <input type="hidden" name="vacancy_id" value="<?php echo $row['vacancy_id']; ?>">
+                                                        <input type="hidden" name="new_status" value="<?php echo $row['vacancy_status_id'] == 1 ? 2 : 1; ?>">
+                                                        <button type="submit" class="px-2 py-1 <?php echo $row['vacancy_status_id'] == 1 ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-500 hover:bg-green-600'; ?> text-white rounded text-xs inline-flex items-center gap-1">
+                                                            <?php if ($row['vacancy_status_id'] == 1): ?>
+                                                                <i class="fas fa-times text-xs"></i>
+                                                                Close
+                                                            <?php else: ?>
+                                                                <i class="fas fa-check text-xs"></i>
+                                                                Open
+                                                            <?php endif; ?>
+                                                        </button>
+                                                    </form>
+                                                    <span class="px-2 py-1 bg-gray-300 text-gray-500 rounded text-xs cursor-not-allowed inline-flex items-center gap-1" title="Cannot delete - has applicants">
+                                                        <i class="fas fa-lock text-xs"></i>
+                                                        Delete
+                                                    </span>
+                                                <?php else: ?>
+                                                    <!-- If vacancy has no applicants, allow status change and deletion -->
+                                                    <form method="POST" action="../../../process.php" class="inline">
+                                                        <input type="hidden" name="change_vacancy_status" value="1">
+                                                        <input type="hidden" name="vacancy_id" value="<?php echo $row['vacancy_id']; ?>">
+                                                        <input type="hidden" name="new_status" value="<?php echo $row['vacancy_status_id'] == 1 ? 2 : 1; ?>">
+                                                        <button type="submit" class="px-2 py-1 <?php echo $row['vacancy_status_id'] == 1 ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-500 hover:bg-green-600'; ?> text-white rounded text-xs inline-flex items-center gap-1">
+                                                            <?php if ($row['vacancy_status_id'] == 1): ?>
+                                                                <i class="fas fa-times text-xs"></i>
+                                                                Close
+                                                            <?php else: ?>
+                                                                <i class="fas fa-check text-xs"></i>
+                                                                Open
+                                                            <?php endif; ?>
+                                                        </button>
+                                                    </form>
+                                                    <form method="POST" action="../../../process.php" class="inline" onsubmit="return confirm('Are you sure you want to delete this vacancy? This action cannot be undone.');">
+                                                        <input type="hidden" name="remove_vacancy" value="1">
+                                                        <input type="hidden" name="vacancy_id" value="<?php echo $row['vacancy_id']; ?>">
+                                                        <button type="submit" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs inline-flex items-center gap-1">
+                                                            <i class="fas fa-trash text-xs"></i>
+                                                            Delete
+                                                        </button>
+                                                    </form>
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                     <?php endwhile; ?>
