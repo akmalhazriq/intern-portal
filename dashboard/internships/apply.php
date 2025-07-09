@@ -156,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <span><i class="fa-solid fa-calendar mr-1"></i><?php echo $created_at; ?></span>
                         <span><i class="fa-solid fa-money-bill-wave mr-1"></i>Elaun: RM<?php echo $elaun; ?></span>
                     </div>
-                    <div class="text-sm text-[var(--foreground)] mt-2 line-clamp-2"><?php echo mb_strimwidth($description, 0, 120, '...'); ?></div>
+                    <div class="text-sm text-[var(--foreground)] mt-2 line-clamp-2"><?php echo $description; ?></div>
                 </div>
                 <?php if ($error): ?>
                     <div class="mb-4 p-3 rounded bg-red-100 text-red-700 text-center"><?php echo $error; ?></div>
@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <button type="submit" class="w-full px-4 py-2 bg-[var(--primary)] text-white rounded-md font-semibold hover:bg-[var(--primary-hover)] transition">Return</button>
                     </a>
                 <?php endif; ?>
-                <?php if (!$success): ?>
+                <?php if ($success == ''): ?>
                 <form method="post" enctype="multipart/form-data" class="space-y-6">
                     <input type="hidden" name="vacancy_id" value="<?php echo $id; ?>">
                     <div>
