@@ -8,21 +8,21 @@
     - [x] Announcement
     - [x] Recent Applications
     - [x] Recommended Internships
-- [ ] Internships Page
+- [x] Internships Page
   - [x] Sidebar
   - [x] Header
-  - [ ] Content
+  - [x] Content
     - [x] Search UI
     - [x] Vacancy View
-      - [ ] Find by titles
-      - [ ] Sort by
+      - [x] Find by titles
+      - [x] Sort by
       - [x] View vacancy by ID
       - [x] Apply Page and Function
-- [ ] Status Page
-  - [ ] Sidebar
-  - [ ] Header
-  - [ ] Content
-    - [ ] Application Status
+- [x] Status Page
+  - [x] Sidebar
+  - [x] Header
+  - [x] Content
+    - [x] Application Status
 - [x] Profile Page
   - [x] Sidebar
   - [x] Header
