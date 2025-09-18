@@ -68,3 +68,7 @@
   - [x] Content
    - [x] Appearance Setting
 - [x] Logout
+
+
+> [!NOTE] 
+> Everything Done
